@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="main__info">
+    <h3 class="mb-4">{% if edit %}Редактировать{% else %}Добавить{% endif %} урок</h3>
+
+    <form method="post" class="d-flex flex-column" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        {% include "components/form_field.html" with field=form.subject %}
+        {% include "components/form_field.html" with field=form.schedule %}
+
+        <div class="row">
+            <div class="col-md-6">{% include "components/form_field.html" with field=form.date %}</div>
+            <div class="col-md-6">{% include "components/form_field.html" with field=form.order %}</div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">{% include "components/form_field.html" with field=form.start_time %}</div>
+            <div class="col-md-6">{% include "components/form_field.html" with field=form.end_time %}</div>
+        </div>
+
+        {% include "components/form_field.html" with field=form.group %}
+        {% include "components/form_field.html" with field=form.auditorium %}
+        {% include "components/form_field.html" with field=form.teachers %}
+
+        <small class="text-muted mb-3">Удерживайте Ctrl (или Cmd), чтобы выбрать нескольких преподавателей</small>
+
+        <div class="d-flex mt-3">
+            <a class="button button--secondary me-auto" href="{% if edit %}{% url 'editSchedule' %}{% else %}{% url 'panel' %}{% endif %}">Отмена</a>
+            <button type="submit" class="button button--primary">
+                {% if edit %}Сохранить изменения{% else %}Создать урок{% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock content %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="main__info">
+    <a type="button" class="btn-close" aria-label="Close" href='{% url "panel" %}'></a>
+    <ul class="nav nav-underline d-flex align-items-center">
+    {% include "components/nav-link.html" with parametr='week' new_value='this' active_parametrs=active_parametrs text='Эта неделя'%}
+    {% include "components/nav-link.html" with parametr='week' new_value='next' active_parametrs=active_parametrs text='След. неделя'%}
+</ul>
+    <ul class="nav nav-tabs">
+        {% for group in groups %}
+        <li class="nav-item">
+            {% include "components/nav-link.html" with parametr='group' new_value=group.code active_parametrs=active_parametrs text=group.code%}
+        </li>
+        {% endfor %}
+    </ul>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Порядок</th>
+                <th>День недели</th>
+                <th>начало</th>
+                <th>конец</th>
+                <th>Предмет</th>
+                <th>Преподаватель</th>
+                <th>Аудитория</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for lesson in lessons %}
+            <tr>
+                <td>{{lesson.id}}</td>
+                <td>{{lesson.order}}</td>
+                <td>{{lesson.date.formatted_weekday}} {{lesson.date.date|date:'m-d'}}</td>
+                <td>{{lesson.start_time}}</td>
+                <td>{{lesson.end_time}}</td>
+                <td>{{lesson.subject}}</td>
+                <td>
+                    {% for teacher in lesson.teachers.all %}
+                    {{teacher}}
+                    {% endfor %}
+                </td>
+                <td>{{lesson.auditorium}}</td>
+                <td>
+                    <div class='d-flex justify-content-center align-items-center h-100'>
+                        <a href="{% url "editLesson" lesson.id %}" class='h-100'><i class="fa-solid fa-pen-to-square"></i></a>
+                    </div>
+                </td>
+            </tr>
+            
+            {% endfor %}
+            
+        </tbody>
+    </table>
+</div>
+
+{% endblock content %}
+

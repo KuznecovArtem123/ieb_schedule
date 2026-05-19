@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    {% load static %}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ИЭБ - Админ Панель</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/admin_style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/reset.css' %}">
+  </head>
+  <body>
+    <div class="login">
+        <img src="{% static 'img/ineb_logo.png' %}" alt="ИНЭБ Логотип" class="logo-ineb">
+        <h2 class="login__title">Вход в админ панель</h2>
+        <form class="login__form" method="post" novalidate>
+          {% csrf_token %}
+
+          {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+              <div class="error">{{ error }}</div>
+            {% endfor %}
+          {% endif %}
+
+          <div class="form-floating mb-3">
+            {{ form.username }}
+            <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+            {{ form.username.errors }}
+          </div>
+          <div class="form-floating mb-3">
+            {{ form.password }}
+            <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+            {{ form.password.errors }}
+          </div>
+
+          <button type="submit" class="login__submit button button--primary">Войти</button>
+
+          {% for message in messages %}
+            <div class="error">{{ message }}</div>
+          {% endfor %}
+        </form>
+    </div>
+  </body>
+</html>

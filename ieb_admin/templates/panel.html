@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="main__info">
+  
+  <ul class="nav nav-underline d-flex align-items-center">
+    {% include "components/nav-link.html" with parametr='edu' new_value='spo' active_parametrs=active_parametrs text='СПО'%}
+    {% include "components/nav-link.html" with parametr='edu' new_value='vo' active_parametrs=active_parametrs text='ВО'%}
+    --
+    {% include "components/nav-link.html" with parametr='week' new_value='this' active_parametrs=active_parametrs text='Эта неделя'%}
+    {% include "components/nav-link.html" with parametr='week' new_value='next' active_parametrs=active_parametrs text='След. неделя'%}
+</ul>
+    <ul class="nav nav-tabs">
+        {% for group in groups %}
+        <li class="nav-item">
+            {% include "components/nav-link.html" with parametr='group' new_value=group.code active_parametrs=active_parametrs text=group.code%}
+        </li>
+        {% endfor %}
+    </ul>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Порядок</th>
+                <th>День недели</th>
+                <th>начало</th>
+                <th>конец</th>
+                <th>Предмет</th>
+                <th>Преподаватель</th>
+                <th>Аудитория</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            {% for lesson in lessons %}
+            <tr>
+                <td>{{lesson.id}}</td>
+                <td>{{lesson.order}}</td>
+                <td>{{lesson.date.formatted_weekday}} {{lesson.date.date|date:'m-d'}}</td>
+                <td>{{lesson.start_time}}</td>
+                <td>{{lesson.end_time}}</td>
+                <td>{{lesson.subject}}</td>
+                <td>
+                  {% if lesson.teachers.all %}
+                    {% for teacher in lesson.teachers.all %}
+                    {{teacher}}
+                    {% endfor %}
+                  {% else %}
+                    -
+                  {% endif %}
+                </td>
+                <td>{% if lesson.auditorium %}{{lesson.auditorium}}{% else %}-{% endif %}</td>
+                
+            </tr>
+            
+            {% endfor %}
+            
+        </tbody>
+    </table>
+</div>
+<div class="main__links">
+    <a class="main__link button button--primary" href="{% url 'upload' %}">Загрузить новое расписание</a>
+    <a class="main__link button button--primary" href="{% url 'editSchedule' %}">Изменить расписание</a>
+    <a class="main__link button button--primary" href="{% url 'addLesson' %}">Добавить пару</a>
+
+<button type="button" class="main__link button button--primary" data-bs-toggle="modal" data-bs-target="#deleteScheduleModal">
+  Удалить расписание
+</button>
+
+<div class="modal fade" id="deleteScheduleModal" tabindex="-1" aria-labelledby="deleteScheduleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" action="{% url 'deleteSchedule' %}">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="deleteScheduleModalLabel">Удаление расписания</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          {% if schedules %}
+            <p class="mb-3">Выберите расписание, которое нужно удалить:</p>
+            {% for radio in delete_form.schedule %}
+              <div class="form-check mb-2">
+                {{ radio.tag }}
+                <label class="form-check-label" for="{{ radio.id_for_label }}">
+                  {{ radio.choice_label }}
+                </label>
+              </div>
+            {% endfor %}
+          {% else %}
+            <p class="text-muted mb-0">Нет загруженных расписаний.</p>
+          {% endif %}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+          {% if schedules %}
+            <button type="submit" class="btn btn-danger">Удалить</button>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+</div>
+{% endblock content %}

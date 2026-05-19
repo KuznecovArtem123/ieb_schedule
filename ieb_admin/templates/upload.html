@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form class="upload__form" method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+
+    <div class="upload__form-group">
+        <h3 class="upload__heading">{{ form.edu.label }}</h3>
+        <div class="upload__radio-group">
+            {{ form.edu }}
+        </div>
+        {{ form.edu.errors }}
+    </div>
+
+    <div class="upload__form-group">
+        <h3 class="upload__heading">{{ form.week.label }}</h3>
+        <div class="upload__radio-group">
+            {{ form.week }}
+        </div>
+        {{ form.week.errors }}
+    </div>
+
+    <div class="upload__form-group">
+        <h3 class="upload__heading">{{ form.schedule.label }}</h3>
+        {{ form.schedule }}
+        {{ form.schedule.errors }}
+    </div>
+
+    <button type="submit" class="upload__submit button button--primary">Загрузить</button>
+</form>
+{% endblock content %}

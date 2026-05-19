@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="main__info">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Код</th>
+                <th>Специальность</th>
+                <th>Курс</th>
+                <th>Отделение</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for group in groups %}
+            <tr>
+                <td>{{group.id}}</td>
+                <td>{{group.code}}</td>
+                <td>{{group.profession}}</td>
+                <td>{{group.course}}</td>
+                <td>{{group.department}}</td>
+                <td class='d-flex justify-content-around'>
+                    <div class='d-flex justify-content-around align-items-center h-100 w-100'>
+                        <a href="{% url "editGroup" group.id %}" class='h-100'><i class="fa-solid fa-pen-to-square"></i></a>
+                        <a href="{% url "deleteGroup" group.id %}"><i class="fa-solid fa-trash"></i></a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+            
+        </tbody>
+    </table>
+</div>
+<div class="main__links">
+    <a type="button" class="main__link button button--primary" href='{%url "addGroup"%}'>
+        Добавить новую группу
+    </a>
+</div>
+{% endblock content %}
+

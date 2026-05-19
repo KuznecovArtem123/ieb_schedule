@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class='d-flex flex-column'>
+    <h1 class="mb-3">Форма правок ошибок</h1>
+
+    <form method="post" class="process-errors-form">
+        {% csrf_token %}
+        {{ formset.management_form }}
+
+        <div class="row g-3">
+            {% for form, exception in error_forms %}
+                <div class="col-lg-6 col-12">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <div class="alert alert-warning py-2 mb-3 small">
+                                <strong>Ошибка:</strong> {{ exception.description }}<br>
+                                <span class="text-muted">
+                                    {{ exception.raw_data.group }} · {{ exception.raw_data.weekday }} ·
+                                    {{ exception.raw_data.date_str }} · пара {{ exception.raw_data.order }}
+                                    {% if exception.raw_data.raw_teachers %}
+                                        · {{ exception.raw_data.raw_teachers }}
+                                    {% endif %}
+                                </span>
+                            </div>
+
+                            {{ form.error_id }}
+                            {% if form.non_field_errors %}
+                                <div class="text-danger small">{{ form.non_field_errors }}</div>
+                            {% endif %}
+
+                            <div class="mb-2">
+                                <label class="form-label form-label-sm mb-0">Предмет</label>
+                                {{ form.subject }}
+                                {{ form.subject.errors }}
+                            </div>
+
+                            <div class="row g-2 mb-2">
+                                <div class="col-7">
+                                    <label class="form-label form-label-sm mb-0">Дата</label>
+                                    {{ form.date }}
+                                    {{ form.date.errors }}
+                                </div>
+                                <div class="col-5">
+                                    <label class="form-label form-label-sm mb-0">Пара №</label>
+                                    {{ form.order }}
+                                    {{ form.order.errors }}
+                                </div>
+                            </div>
+
+                            <div class="row g-2 mb-2">
+                                <div class="col-6">
+                                    <label class="form-label form-label-sm mb-0">Начало</label>
+                                    {{ form.start_time }}
+                                    {{ form.start_time.errors }}
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label form-label-sm mb-0">Конец</label>
+                                    {{ form.end_time }}
+                                    {{ form.end_time.errors }}
+                                </div>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label form-label-sm mb-0">Группа</label>
+                                {{ form.group }}
+                                {{ form.group.errors }}
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label form-label-sm mb-0">Аудитория</label>
+                                {{ form.auditorium }}
+                                {{ form.auditorium.errors }}
+                            </div>
+
+                            <div class="mb-0">
+                                <label class="form-label form-label-sm mb-0">Преподаватели</label>
+                                {{ form.teachers }}
+                                {{ form.teachers.errors }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="col-12">Ошибок не найдено.</p>
+            {% endfor %}
+        </div>
+
+        {% if error_forms %}
+            <div class="d-flex flex-wrap gap-2 mt-4">
+                <a class="button button--secondary" href="{% url 'cancelProcess' %}">Отменить загрузку</a>
+                <button type="submit" class="button button--primary ms-auto">
+                    Сохранить
+                </button>
+            </div>
+        {% endif %}
+    </form>
+</section>
+
+<style>
+    .process-errors-form .form-label-sm { font-size: 0.8rem; }
+    .process-errors-form select[multiple] { min-height: 72px; }
+</style>
+{% endblock content %}

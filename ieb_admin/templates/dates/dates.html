@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="main__info">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Дата</th>
+                <th>День недели</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for date in dates %}
+            <tr>
+                <td>{{date.id}}</td>
+                <td>{{date.date}}</td>
+                <td>{{date.formatted_weekday}}</td>
+                <td class='d-flex justify-content-around'>
+                    <div class='d-flex justify-content-around align-items-center h-100 w-100'>
+                        <a href="{% url "editDate" date.id %}" class='h-100'><i class="fa-solid fa-pen-to-square"></i></a>
+                        <a href="{% url "deleteDate" date.id %}"><i class="fa-solid fa-trash"></i></a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+            
+        </tbody>
+    </table>
+</div>
+<div class="main__links">
+    <a type="button" class="main__link button button--primary" href='{%url "addDate" %}'>
+        Добавить новую дату
+    </a>
+</div>
+{% endblock content %}
+

@@ -1,0 +1,392 @@
+/* --- CSS-переменные для тем --- */
+:root {
+    --bg-gradient-start: #e0eafc;
+    --bg-gradient-end: #cfdef3;
+    --primary: #2B60A5; /* синий */
+    --accent: #ff9800; /* оранжевый */
+    --container-bg: rgba(255,255,255,0.97);
+    --muted: #888888;
+    --card-bg: #f4f7fb;
+    --weekday-odd: #00a8f1;
+    --weekday-even: #ff9900d3;
+    --weekday-border-odd: rgba(49,166,255,0.82);
+    --weekday-border-even: rgba(248,140,73,0.83);
+    --weekday-text: #ffffff;
+    --pair-subject: #333333;
+    --button: #f1f0ff;
+    --button-active: rgba(224,234,252,0.9);
+    --button-svg: #2B60A5;
+    --shadow: rgba(37,99,235,0.10);
+}
+
+/* Тёмная тема (Telegram-like) */
+.theme-dark {
+    --bg-gradient-start: #0b1220;
+    --bg-gradient-end: #071025;
+    --primary: #2b61a5;
+    --accent: #ff8c42;
+    --container-bg: rgba(13,18,28,0.92);
+    --muted: #9aa6b2;
+    --card-bg: #0f1724;
+    --weekday-odd: #2b61a5;
+    --weekday-even: #d16002;
+    --weekday-border-odd: #3379d4;
+    --weekday-border-even: #eb6b21;
+    --weekday-text: #dbe9ff;
+    --pair-subject: #dbe9ff;
+    --button: #121c2c;
+    --button-active: #182539;
+    --button-svg: rgba(224,234,252,0.9);
+    --shadow: rgba(0,0,0,0.5);
+}
+
+/* Кнопка возврата наверх */
+.scroll-to-top {
+    position: fixed;
+    right: 18px;
+    bottom: 24px;
+    width: 56px;
+    height: 56px;
+    background: rgba(37,99,235,0.08);
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.07);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s cubic-bezier(.4,0,.2,1), background 0.18s, transform 0.13s;
+    z-index: 99;
+    color: var(--primary);
+}
+.scroll-to-top > svg > circle {
+    fill: var(--button);
+}
+.scroll-to-top > svg > path {
+    stroke: var(--button-svg);
+}
+.scroll-to-top.visible {
+    opacity: 0.7;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+.scroll-to-top:hover {
+    background: var(--button);
+    opacity: 1;
+    transform: scale(1.08);
+}
+.scroll-to-top:active {
+    background: var(--button);
+    opacity: 1;
+    transform: scale(0.97);
+}
+.scroll-to-top svg {
+    display: block;
+}
+/* Кнопки переключения недели */
+.week-switch-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 18px;
+}
+.week_button {
+    display: inline-block;
+    padding: 8px 18px;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.10);
+    transition: background 0.18s, transform 0.12s;
+    border: none;
+}
+.current-button {
+    background: #7d7c91;
+}
+.week_button:hover {
+    background: #2B60A5;
+    transform: scale(1.04);
+}
+.week_button:active {
+    background: #ff9800;
+    color: #fff;
+    transform: scale(0.97);
+}
+.theme-toggle {
+    position: absolute;
+    top: 14px;
+    right: 12px;
+    width: 40px;
+    height: 34px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+}
+.theme-toggle:focus { outline: 2px solid rgba(37,99,235,0.2); border-radius: 6px; }
+.nav_buttons--teachers {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.no-teachers {
+    text-align: center;
+    color: #ff9800;
+    margin: 24px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Логотип */
+.logo-ineb {
+    display: block;
+    margin: 0 auto 18px auto;
+    max-width: 110px;
+    height: auto;
+    filter: drop-shadow(0 2px 8px var(--shadow));
+}
+
+.container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 32px 16px 24px 16px;
+    box-sizing: border-box;
+    background: var(--container-bg);
+    border-radius: 18px;
+    box-shadow: 0 4px 24px var(--shadow);
+    margin-top: 24px;
+    position: relative;
+}
+
+.back_button {
+    position: absolute;
+    top: 14px;
+    left: 10px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    z-index: 2;
+    border-radius: 50%;
+    transition: background 0.18s, box-shadow 0.18s, transform 0.12s;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.07);
+}
+.back_button > svg > circle {
+    fill: var(--button);
+}
+.back_button:hover {
+    background: var(--button);
+    box-shadow: 0 4px 16px rgba(37,99,235,0.13);
+    transform: scale(1.07);
+}
+.back_button svg {
+    display: block;
+}
+.back_button > svg > path {
+    stroke: var(--button-svg);
+}
+.back_button:active {
+    background: var(--button-active);
+    transform: scale(0.97);
+}
+
+h2 {
+    text-align: center;
+    color: var(--primary);
+    margin-bottom: 32px;
+    font-size: 2rem;
+    letter-spacing: 1px;
+}
+
+.nav_buttons--groups {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.redirect_button {
+    display: block;
+    width: 100%;
+    padding: 16px 0;
+    background-color: var(--primary);
+    color: #fff;
+    text-align: center;
+    border-radius: 12px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 4px 16px rgba(37,99,235,0.13);
+    transition: background 0.2s, transform 0.1s;
+    letter-spacing: 0.5px;
+}
+.redirect_button:active {
+    background-color: #5E91D2;
+    transform: scale(0.98);
+}
+
+/* --- Расписание --- */
+.weekday-block {
+    margin-bottom: 28px;
+    border-radius: 20px;
+    padding-bottom: 28px;
+}
+.weekday-block:nth-child(odd) {
+    background-color: var(--weekday-odd);
+    border: solid 3px var(--weekday-border-odd);
+}
+.weekday-block:nth-child(even) {
+    background-color: var(--weekday-even);
+    border: solid 3px var(--weekday-border-even);
+}
+
+.weekday-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--weekday-text);
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+    text-align: center;
+}
+.pairs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+.pair-card {
+    background-color: var(--card-bg);
+    border-radius: 14px;
+    box-shadow: 0 2px 10px rgba(37,99,235,0.08);
+    padding: 14px 16px 10px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border: 1.5px solid #2563eb22;
+}
+.pair-row {
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+}
+.pair-row--top {
+    justify-content: space-between;
+    font-size: 0.98rem;
+    color: #7DA2D2;
+    margin-bottom: 2px;
+}
+.pair-row--middle {
+    justify-content: space-between;
+}
+.pair-row--footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.97em;
+    margin-top: 4px;
+}
+.pair-num {
+    font-weight: 700;
+    min-width: 22px;
+    color: var(--primary);
+}
+.pair-teacher {
+    color: #888;
+    font-weight: 500;
+}
+.pair-students-group {
+    color: #38acff;
+    font-size: 1.1em;
+    font-weight: 400;
+    margin-left: 12px;
+    white-space: nowrap;
+    align-self: flex-end;
+}
+.pair-subject {
+    font-weight: 600;
+    color: var(--pair-subject);
+    font-size: 1.05em;
+    margin-bottom: 2px;
+    letter-spacing: 0.2px;
+    word-break: break-word;
+    width: 277px;
+    max-width: 277px;
+    
+}
+.pair-time-vertical {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    min-width: 48px;
+    gap: 2px;
+}
+.pair-time {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 0.97em;
+    color: var(--primary);
+    margin: 0 8px;
+    width: 111px;
+}
+.pair-classroom {
+    color: #38acff;
+    font-size: 0.97em;
+    font-weight: 500;
+}
+
+
+/* Сообщение об отсутствии групп */
+.no-groups {
+    text-align: center;
+    color: #888;
+    margin: 24px 0;
+    font-size: 1.1rem;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+    min-height: 100vh;
+}
+
+
+
+
+
+@media (max-width: 480px) {
+    .container {
+        padding: 16px 4px;
+    }
+    h2 {
+        font-size: 1.3rem;
+        margin-bottom: 20px;
+    }
+    .redirect_button {
+        font-size: 1rem;
+        padding: 12px 0;
+    }
+    .logo-ineb {
+        max-width: 80px;
+        margin-bottom: 12px;
+    }
+    .pair-card {
+        padding: 10px 7px 8px 10px;
+    }
+    .pair-row {
+        font-size: 0.97rem;
+    }
+        .nav_buttons--teachers {
+        gap: 10px;
+    }
+}

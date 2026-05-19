@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="upload__form">
+    <h2 class="mb-3">Расписание уже существует</h2>
+    <p class="mb-4">
+        Расписание <strong>{{ edu_label }} — {{ week_label }}</strong> уже загружено
+        ({{ existing.uploaded_at|date:"d.m.Y" }}).
+        Перезаписать существующее расписание новым файлом?
+        Все уроки этого расписания будут удалены.
+    </p>
+
+    <div class="d-flex flex-wrap gap-2">
+        <form method="post" action="{% url 'upload' %}">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="overwrite">
+            <button type="submit" class="button button--primary">Перезаписать</button>
+        </form>
+
+        <form method="post" action="{% url 'upload' %}">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="cancel_overwrite">
+            <button type="submit" class="button button--secondary">Отмена</button>
+        </form>
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,7 @@
+<li class="nav-item">
+  <a
+    class="nav-link {% for param, value in active_parametrs.items %}{% if new_value == value %}active{% endif %}{% endfor %}"
+    href="?{% for param, value in active_parametrs.items %}{% if param == parametr and new_value != value %}{{parametr}}={{new_value}}{% else %}{{param}}={{value}}{% endif %}&{% endfor %}"
+    >{{text}}</a
+  >
+</li>
