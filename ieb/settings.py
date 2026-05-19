@@ -28,16 +28,7 @@ DEBUG = bool(os.getenv('DEBUG', False))
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1 localhost").split()
 
-# Генерируем список CSRF_TRUSTED_ORIGINS
-CSRF_TRUSTED_ORIGINS = []
-for host in ALLOWED_HOSTS:
-    if not host.startswith('.'):  # Пропускаем маски вида '.domain.com' если есть
-        CSRF_TRUSTED_ORIGINS.append(f"https://{host}")
-        CSRF_TRUSTED_ORIGINS.append(f"http://{host}")
-
-# На всякий случай добавим дефолтный локалхост для разработки
-if not CSRF_TRUSTED_ORIGINS:
-    CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:8000", "http://localhost:8000"]
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "http://127.0.0.1:8000").split()
 
 # Application definition
 
