@@ -26,9 +26,21 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.getenv('DEBUG', False))
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1 localhost").split()
+# Чистим строки от возможных случайных кавычек и режем по пробелам
+raw_hosts = os.getenv("ALLOWED_HOSTS", "ineb-raspisanie.ru localhost 127.0.0.1").strip("'\"")
+ALLOWED_HOSTS = raw_hosts.split()
 
-CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "http://127.0.0.1:8000").split()
+raw_csrf = os.getenv("CSRF_TRUSTED_ORIGINS", "").strip("'\"")
+if raw_csrf:
+    CSRF_TRUSTED_ORIGINS = raw_csrf.split()
+else:
+    # Железобетонный дефолт для продакшена, если Docker опять зажмет переменную
+    CSRF_TRUSTED_ORIGINS = [
+        "https://ineb-raspisanie.ru",
+        "http://ineb-raspisanie.ru",
+        "http://127.0.0.1:8000",
+        "http://localhost:8000"
+    ]
 
 # Application definition
 
