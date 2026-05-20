@@ -27,7 +27,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = bool(os.getenv('DEBUG', False))
 
 # Чистим строки от возможных случайных кавычек и режем по пробелам
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "ineb-raspisanie.ru localhost 127.0.0.1").strip("'\"").split(' ')
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "ineb-raspisanie.ru localhost 127.0.0.1").split(' ')
 
 
 # Application definition
