@@ -20,5 +20,5 @@ class GroupSerializer(serializers.ModelSerializer):
 
 class TeacherSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Lesson
+        model = Teacher
         fields = '__all__'
