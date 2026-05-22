@@ -36,7 +36,7 @@
             <tr>
                 <td>{{lesson.id}}</td>
                 <td>{{lesson.order}}</td>
-                <td>{{lesson.date.formatted_weekday}} {{lesson.date.date|date:'m-d'}}</td>
+                <td>{{ lesson.formatted_weekday }} {{ lesson.date|date:'d.m' }}</td>
                 <td>{{lesson.start_time}}</td>
                 <td>{{lesson.end_time}}</td>
                 <td>{{lesson.subject}}</td>

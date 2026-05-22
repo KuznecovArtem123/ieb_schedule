@@ -78,7 +78,8 @@ GET /api/lessons/?edu=spo&week=this
   {
     "id": 1,
     "subject": "Математика",
-    "date_display": "2026-05-19",
+    "date": "2026-05-19",
+    "weekday": "Понедельник",
     "order": 1,
     "start_time": "08:30:00",
     "end_time": "10:00:00",
@@ -96,7 +97,8 @@ GET /api/lessons/?edu=spo&week=this
 | -------------- | ------- | ----------------------------- |
 | `id`           | integer | ID урока                      |
 | `subject`      | string  | Название предмета             |
-| `date_display` | string  | Дата (ISO `YYYY-MM-DD`)       |
+| `date`         | string  | Дата (ISO `YYYY-MM-DD`)       |
+| `weekday`      | string  | День недели (на русском)      |
 | `order`        | integer | Номер пары                    |
 | `start_time`   | string  | Время начала (`HH:MM:SS`)     |
 | `end_time`     | string  | Время окончания (`HH:MM:SS`)  |

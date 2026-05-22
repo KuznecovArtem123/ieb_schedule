@@ -17,7 +17,6 @@ from .utils.ScheduleReader import ScheduleReader
 from .upload_cleanup import cancel_pending_schedule, complete_pending_upload
 from .forms import (
     AdminLoginForm,
-    DateForm,
     GroupForm,
     LessonAdminForm,
     LessonErrorFormSet,
@@ -253,7 +252,7 @@ def processView(request):
         return redirect('upload')
 
     schedule_file = get_object_or_404(Schedule, id=file_id)
-    reader = ScheduleReader(schedule_file, Date, Teacher, Lesson, Group, ScheduleError)
+    reader = ScheduleReader(schedule_file, Teacher, Lesson, Group, ScheduleError)
 
     mismatch_redirect = _redirect_if_department_mismatch(request, reader, schedule_file)
     if mismatch_redirect:
@@ -363,6 +362,17 @@ def addLesson(request):
 
     return render(request, 'lesson_add.html', {'form': form, 'edit': False})
 
+
+@login_required(login_url='/admin/login/')
+def deleteLesson(request, id):
+    lesson = get_object_or_404(Lesson, id=id)
+    week = lesson.schedule.week
+    group_code = lesson.group.code
+    lesson.delete()
+    messages.success(request, 'Урок удалён.')
+    return redirect(f'{reverse("editSchedule")}?week={week}&group={group_code}')
+
+
 @login_required(login_url='/admin/login/')
 def deleteSchedule(request):
     form = ScheduleDeleteForm(request.POST or None)
@@ -416,40 +426,6 @@ def teachersDeleteView(request, id):
     teacher = get_object_or_404(Teacher, id=id)
     teacher.delete()
     return redirect('teachers')
-
-# dates
-@login_required(login_url='/admin/login/')
-def datesView(request):
-    dates = Date.objects.all() 
-    return render(request, 'dates/dates.html', {'dates': dates})
-
-@login_required(login_url='/admin/login/')
-def datesAddView(request):
-    form = DateForm(request.POST or None)
-    if request.method == 'POST' and form.is_valid():
-        form.save()
-        return redirect('dates')
-    if request.method == 'POST':
-        messages.error(request, 'Проверьте заполнение формы.')
-    return render(request, 'dates/dates_add.html', {'form': form, 'edit': False})
-
-
-@login_required(login_url='/admin/login/')
-def datesEditView(request, id):
-    date = get_object_or_404(Date, id=id)
-    form = DateForm(request.POST or None, instance=date)
-    if request.method == 'POST' and form.is_valid():
-        form.save()
-        return redirect('dates')
-    if request.method == 'POST':
-        messages.error(request, 'Проверьте заполнение формы.')
-    return render(request, 'dates/dates_add.html', {'form': form, 'edit': True})
-
-@login_required(login_url='/admin/login/')
-def datesDeleteView(request, id):
-    date = get_object_or_404(Date, id=id)
-    date.delete()
-    return redirect('dates')
 
 # groups
 @login_required(login_url='/admin/login/')

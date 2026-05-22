@@ -8,7 +8,7 @@ from django.forms import formset_factory
 from django.utils import timezone
 
 from .models import Schedule
-from schedule.models import Date, Lesson, Teacher, Group
+from schedule.models import Lesson, Teacher, Group
 
 
 FORM_CONTROL = {'class': 'form-control'}
@@ -43,15 +43,8 @@ def initial_from_schedule_error(error):
         initial['group'] = group
 
     parsed_date = _parse_date_string(raw.get('date_str'))
-    date_obj = None
     if parsed_date:
-        date_obj = Date.objects.filter(date=parsed_date).first()
-    if not date_obj:
-        weekday_num = Date.KEYS_FROM_DAYS.get(raw.get('weekday'))
-        if weekday_num:
-            date_obj = Date.objects.filter(weekday=weekday_num).first()
-    if date_obj:
-        initial['date'] = date_obj
+        initial['date'] = parsed_date
 
     teacher_pattern = re.compile(r'[А-Я][а-яё]+\s+[А-Я]\.\s*[А-Я]\.')
     raw_teachers = raw.get('raw_teachers') or ''
@@ -80,16 +73,6 @@ class TeacherForm(forms.ModelForm):
         }
 
 
-class DateForm(forms.ModelForm):
-    class Meta:
-        model = Date
-        fields = ['date', 'weekday']
-        widgets = {
-            'date': forms.DateInput(attrs={**FORM_CONTROL, 'type': 'date'}),
-            'weekday': forms.Select(attrs=FORM_CONTROL),
-        }
-
-
 class GroupForm(forms.ModelForm):
     class Meta:
         model = Group
@@ -103,11 +86,6 @@ class GroupForm(forms.ModelForm):
 
 
 class LessonAdminForm(forms.ModelForm):
-    date = forms.ModelChoiceField(
-        queryset=Date.objects.all().order_by('date'),
-        widget=forms.Select(attrs=FORM_CONTROL),
-        label='Дата',
-    )
     group = forms.ModelChoiceField(
         queryset=Group.objects.all().order_by('code'),
         widget=forms.Select(attrs=FORM_CONTROL),
@@ -133,17 +111,12 @@ class LessonAdminForm(forms.ModelForm):
         ]
         widgets = {
             'subject': forms.TextInput(attrs={**FORM_CONTROL, 'placeholder': 'Напр: Информационные технологии'}),
+            'date': forms.DateInput(attrs={**FORM_CONTROL, 'type': 'date'}),
             'order': forms.NumberInput(attrs={**FORM_CONTROL, 'min': 1}),
             'start_time': forms.TimeInput(attrs={**FORM_CONTROL, 'type': 'time'}),
             'end_time': forms.TimeInput(attrs={**FORM_CONTROL, 'type': 'time'}),
             'auditorium': forms.TextInput(attrs={**FORM_CONTROL, 'placeholder': 'Напр: 402'}),
         }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['date'].label_from_instance = lambda obj: (
-            f'{obj.date.strftime("%d.%m.%Y")} ({obj.get_weekday_display()})'
-        )
 
 
 class LessonErrorForm(LessonAdminForm):
@@ -188,16 +161,16 @@ class ScheduleUploadForm(forms.Form):
         widget=forms.RadioSelect,
         label='Неделя',
     )
+    schedule = forms.FileField(
+        label='Файл .xlsx с расписанием',
+        widget=forms.ClearableFileInput(attrs={'class': 'upload__file', 'accept': '.xlsx'}),
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if not self.is_bound:
             self.fields['edu'].initial = Schedule.Edu.SPO
             self.fields['week'].initial = Schedule.Week.THIS
-    schedule = forms.FileField(
-        label='Файл .xlsx с расписанием',
-        widget=forms.ClearableFileInput(attrs={'class': 'upload__file', 'accept': '.xlsx'}),
-    )
 
     def clean_schedule(self):
         file = self.cleaned_data['schedule']

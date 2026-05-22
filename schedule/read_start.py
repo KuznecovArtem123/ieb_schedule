@@ -1,10 +1,14 @@
+from pathlib import Path
 
-
+from schedule.models import Lesson, Teacher, Group, ScheduleError
 from ieb_admin.utils.ScheduleReader import ScheduleReader
 
-reader = ScheduleReader(Path('C:/Users/won/Desktop/All code/python/ineb-schedule/ineb-project-v2/ieb/media/schedules/schedule.xlsx'), Date, Teacher, Lesson, TeacherLesson)
-
-some_sheet = reader.workBook.worksheets[0]
+reader = ScheduleReader(
+    Path('media/schedules/schedule.xlsx'),
+    Teacher,
+    Lesson,
+    Group,
+    ScheduleError,
+)
 
 print(reader.parse_lessons())
-print(reader.teachers)

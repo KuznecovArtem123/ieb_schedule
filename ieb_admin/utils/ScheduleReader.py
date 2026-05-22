@@ -7,8 +7,7 @@ from openpyxl.cell import MergedCell
 import json
 
 class ScheduleReader:
-    def __init__(self, file_obj, DateModel, TeacherModel, LessonModel, GroupModel, ErrorModel):
-        self.Date = DateModel
+    def __init__(self, file_obj, TeacherModel, LessonModel, GroupModel, ErrorModel):
         self.Teacher = TeacherModel
         self.Group = GroupModel
         self.Lesson = LessonModel
@@ -328,16 +327,16 @@ class ScheduleReader:
         """Добавляет исправленную пару к valid_lessons/valid_announces и удаляет запись об ошибке."""
         raw = error.raw_data or {}
         group_obj = cleaned_data['group']
-        date_model = cleaned_data['date']
+        lesson_date = cleaned_data['date']
         is_announce = bool(raw.get('content')) and not raw.get('subject')
 
         item = {
             'order': int(cleaned_data['order']),
             'weekday': raw.get('weekday'),
-            'date_str': raw.get('date_str') or str(date_model.date),
+            'date_str': raw.get('date_str') or str(lesson_date),
             'group': group_obj.code,
             'group_obj': group_obj,
-            'date_obj': date_model.date,
+            'date_obj': lesson_date,
             'start_time': cleaned_data['start_time'],
             'end_time': cleaned_data['end_time'],
         }
@@ -360,10 +359,9 @@ class ScheduleReader:
         
         # Загружаем Уроки
         for item in self.valid_lessons:
-            date_obj = self._get_or_create_date(item)
             lesson = self.Lesson.objects.create(
                 schedule=self.file_obj,
-                date=date_obj, group=item['group_obj'], order=item['order'],
+                date=item['date_obj'], group=item['group_obj'], order=item['order'],
                 start_time=self._parse_time(item['start_time']),
                 end_time=self._parse_time(item['end_time']),
                 subject=item['subject'], auditorium=item['auditorium']
@@ -374,10 +372,9 @@ class ScheduleReader:
 
         # Загружаем Анонсы
         for item in self.valid_announces:
-            date_obj = self._get_or_create_date(item)
             self.Lesson.objects.create(
                 schedule=self.file_obj,
-                date=date_obj, 
+                date=item['date_obj'],
                 group=item['group_obj'], 
                 order=item['order'],
                 start_time=self._parse_time(item['start_time']),
@@ -387,12 +384,3 @@ class ScheduleReader:
             count += 1
             
         return count
-
-    def _get_or_create_date(self, item):
-        """Получение объекта даты с учетом дня недели."""
-        date_obj, _ = self.Date.objects.get_or_create(
-            date=item['date_obj'],
-            defaults={'weekday': self.Date.KEYS_FROM_DAYS.get(item['weekday'], 1)}
-        )
-        return date_obj
-
