@@ -27,7 +27,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = bool(os.getenv('DEBUG', False))
 
 # Чистим строки от возможных случайных кавычек и режем по пробелам
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "ineb-raspisanie.ru localhost 127.0.0.1").split(' ')
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "api.ineb-raspisanie.ru localhost 127.0.0.1").split(' ')
 
 
 # Application definition
@@ -130,15 +130,15 @@ MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  
-    "http://127.0.0.1:5173",
-    "http://localhost:3000",  
-    "http://127.0.0.1:3000",
+    "http://ineb-raspisanie.ru",
+    "https://ineb-raspisanie.ru",
+    "http://127.0.0.1:8000",
+    "http://localhost:8000",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://ineb-raspisanie.ru",
-    "http://ineb-raspisanie.ru",
+    "https://api.ineb-raspisanie.ru",
+    "http://api.ineb-raspisanie.ru",
     "http://127.0.0.1:8000",
     "http://localhost:8000",
 ]
