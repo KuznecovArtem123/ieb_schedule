@@ -1,5 +1,5 @@
 # 🗓️ Система управления расписанием колледжа
-Стек: Django, Django REST Framework, Python, PostgreSQL, CI/CD (автодеплой при коммите)
+Стек: Django, Django REST Framework, Python, sqlite, CI/CD (автодеплой при коммите)
 
 # 📋 Возможности
 Кастомная админ-панель для загрузки расписания из Excel-файлов
