@@ -24,7 +24,7 @@ load_dotenv()
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(os.getenv('DEBUG', False))
+DEBUG = True if os.getenv('DEBUG') == 'True' else False
 
 # Чистим строки от возможных случайных кавычек и режем по пробелам
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "api.ineb-raspisanie.ru localhost 127.0.0.1").split(' ')
