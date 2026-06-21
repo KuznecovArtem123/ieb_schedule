@@ -27,8 +27,8 @@ venv\scripts\activate
  или (Linux/Mac)
 source venv/bin/activate
 
-# 3. Установить зависимости
+ 3. Установить зависимости
 pip install -r requirements.txt
 
-# 4. Запустить сервер
+ 4. Запустить сервер
 python manage.py runserver
