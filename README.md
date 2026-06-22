@@ -1,6 +1,8 @@
 # 🗓️ Система управления расписанием колледжа
 Стек: Django, Django REST Framework, Python, sqlite, CI/CD (автодеплой при коммите)
 
+<img width="1920" height="665" alt="image" src="https://github.com/user-attachments/assets/3e872eca-7b57-40eb-a0cc-099c3ef673e5" />
+
 # 📋 Возможности
 Кастомная админ-панель для загрузки расписания из Excel-файлов
 
@@ -27,12 +29,8 @@ venv\scripts\activate
  или (Linux/Mac)
 source venv/bin/activate
 
-
-<img width="1920" height="665" alt="image" src="https://github.com/user-attachments/assets/3e872eca-7b57-40eb-a0cc-099c3ef673e5" />
-
-
- 3. Установить зависимости
+ 4. Установить зависимости
 pip install -r requirements.txt
 
- 4. Запустить сервер
+ 5. Запустить сервер
 python manage.py runserver
