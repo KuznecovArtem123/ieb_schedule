@@ -114,6 +114,12 @@ media/
 *.db
 *.pid
 
+# Nodejs
+node_modules
+dist
+dist-ssr
+*.local
+
 # Ignore Django Migrations in Development if you are working on team
 
 # Only for Development only
