@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { groupService } from '../services/groupService';
 import { useParams } from "react-router-dom";
 import Group from '../components/Group';

@@ -15,7 +15,7 @@ services:
       - backend
 
   backend:
-    image: ghcr.io/kuznecovartem123/ieb_schedule/backend:latest # <-- ИСПРАВЛЕНО: убрана лишняя 'b'
+    image: ghcr.io/kuznecovartem123/ieb_schedule/backend:latest
     restart: unless-stopped
     env_file:
       - .env
@@ -29,7 +29,6 @@ services:
         condition: service_healthy
     networks:
       - backend
-    # <-- УДАЛЕНО: command, так как этим управляет entrypoint.sh
 
   frontend:
     image: ghcr.io/kuznecovartem123/ieb_schedule/frontend:latest

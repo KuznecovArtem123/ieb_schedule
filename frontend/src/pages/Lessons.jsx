@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams, useParams, Link } from "react-router-dom";
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams, useParams } from "react-router-dom";
 import { groupService } from '../services/groupService';
 import PairCard from '../components/PairCard';
 
