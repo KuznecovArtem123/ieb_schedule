@@ -228,7 +228,7 @@ GET /api/teachers/
 ### 5. Список групп
 
 ```
-GET /api/groups/
+GET /api/groups?edu=spo
 ```
 
 #### Пример запроса

@@ -40,7 +40,8 @@ class TeacherLessonsView(APIView):
 
 class GroupView(APIView):
     def get(self, request):
-        groups = Group.objects.all()
+        edu = request.GET.get('edu').upper() or Group.Department.SPO
+        groups = Group.objects.all().filter(department=edu)
         serializer = GroupSerializer(groups, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
     

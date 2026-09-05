@@ -1,0 +1,39 @@
+{% extends "base.html" %} {% block content %}
+<h3 class="mb-4">Проверьте данные перед добавлением</h3>
+<p class="text-muted">Будут добавлены только записи, которых ещё нет в базе.</p>
+
+<div class="row g-4 mb-4">
+  <div class="col-md-6">
+    <h5>Новые группы ({{ groups|length }})</h5>
+    <ul class="list-group">
+      {% for group in groups %}
+      <li class="list-group-item">
+        <strong>{{ group.code }}</strong> — {{ group.profession }}
+      </li>
+      {% empty %}
+      <li class="list-group-item text-muted">Новых групп нет.</li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="col-md-6">
+    <h5>Новые преподаватели ({{ teachers|length }})</h5>
+    <ul class="list-group">
+      {% for teacher in teachers %}
+      <li class="list-group-item">{{ teacher }}</li>
+      {% empty %}
+      <li class="list-group-item text-muted">Новых преподавателей нет.</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+<form method="post" action="{% url 'academicDataImportConfirm' %}">
+  {% csrf_token %}
+  <a class="button button--secondary me-2" href="{% url 'academicDataImport' %}"
+    >Отмена</a
+  >
+  <button type="submit" class="button button--primary">
+    Подтвердить добавление
+  </button>
+</form>
+{% endblock content %}

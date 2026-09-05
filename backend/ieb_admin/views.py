@@ -9,19 +9,24 @@ from django.contrib import messages
 from django.core.cache import cache
 from django.core.files import File
 from django.core.files.storage import default_storage
+from django.db import transaction
 from django.utils import timezone
 from .models import Schedule
 from .schedule_rollover import maybe_rollover_schedules
 from schedule.models import *
 from .utils.ScheduleReader import ScheduleReader
+from .utils.academic_data import AcademicDataParser
 from .upload_cleanup import cancel_pending_schedule, complete_pending_upload
 from .forms import (
+    BulkGroupsForm,
+    BulkTeachersForm,
     AdminLoginForm,
     GroupForm,
     LessonAdminForm,
     LessonErrorFormSet,
     ScheduleDeleteForm,
     ScheduleUploadForm,
+    AcademicDataImportForm,
     TeacherForm,
     initial_from_schedule_error,
 )
@@ -99,6 +104,87 @@ def panelView(request):
         'schedules': Schedule.objects.all().order_by('-uploaded_at'),
         'delete_form': ScheduleDeleteForm(),
     })
+
+
+@login_required(login_url='/admin/login/')
+def academicDataImportView(request):
+    pending = request.session.pop('academic_import', None)
+    if pending and pending.get('path') and default_storage.exists(pending['path']):
+        default_storage.delete(pending['path'])
+
+    if request.method == 'POST':
+        form = AcademicDataImportForm(request.POST, request.FILES)
+        if form.is_valid():
+            uploaded_file = form.cleaned_data['schedule']
+            path = default_storage.save(f'pending_academic_imports/{uuid4().hex}.xlsx', uploaded_file)
+            try:
+                groups, teachers = AcademicDataParser().parse(default_storage.path(path))
+            except Exception:
+                default_storage.delete(path)
+                messages.error(request, 'Не удалось прочитать файл Excel.')
+            else:
+                new_groups = [
+                    {'code': code, 'profession': profession}
+                    for code, profession in groups.items()
+                    if not Group.objects.filter(code=code).exists()
+                ]
+                new_teachers = [
+                    name for name in teachers
+                    if not Teacher.objects.filter(search_name__iexact=name).exists()
+                ]
+                request.session['academic_import'] = {
+                    'path': path,
+                    'edu': form.cleaned_data['edu'],
+                    'groups': new_groups,
+                    'teachers': new_teachers,
+                }
+                return render(request, 'academic_import_confirm.html', {
+                    'groups': new_groups,
+                    'teachers': new_teachers,
+                })
+    else:
+        form = AcademicDataImportForm(initial={'edu': Schedule.Edu.SPO})
+    return render(request, 'academic_import.html', {'form': form})
+
+
+@login_required(login_url='/admin/login/')
+def academicDataImportConfirmView(request):
+    pending = request.session.get('academic_import')
+    if not pending:
+        messages.error(request, 'Данные для подтверждения не найдены. Загрузите файл заново.')
+        return redirect('academicDataImport')
+    if request.method != 'POST':
+        return redirect('academicDataImport')
+
+    try:
+        groups, teachers = AcademicDataParser().parse(default_storage.path(pending['path']))
+        department = Group.Department.VO if pending['edu'] == Schedule.Edu.VO else Group.Department.SPO
+        with transaction.atomic():
+            for code, profession in groups.items():
+                Group.objects.get_or_create(
+                    code=code,
+                    defaults={'profession': profession, 'department': department, 'course': 1},
+                )
+            for name in teachers:
+                parts = name.replace('.', '').split()
+                Teacher.objects.get_or_create(
+                    search_name=name,
+                    defaults={
+                        'last_name': parts[0],
+                        'first_name': parts[1][0] if len(parts) > 1 else '',
+                        'patronymic': parts[2][0] if len(parts) > 2 else '',
+                    },
+                )
+    except Exception:
+        messages.error(request, 'Не удалось сохранить данные из Excel.')
+        return redirect('academicDataImport')
+    finally:
+        if default_storage.exists(pending['path']):
+            default_storage.delete(pending['path'])
+        request.session.pop('academic_import', None)
+
+    messages.success(request, 'Новые группы и преподаватели успешно добавлены.')
+    return redirect('panel')
 
 
 def _clear_pending_upload(request):
@@ -233,7 +319,7 @@ def _redirect_if_department_mismatch(request, reader, schedule_file):
     if len(mismatches) == 1:
         message = mismatches[0]
     else:
-        message = 'В файле есть группы другого отделения (Например вы выбрали СПО, а в файле есть группы ВО)'
+        message = f'В файле есть группы другого отделения (Например вы выбрали СПО, а в файле есть группы ВО) {mismatches}'
 
     _abort_schedule_upload(request, schedule_file, message)
     return redirect('upload')
@@ -399,6 +485,24 @@ def teachersView(request):
     teachers = Teacher.objects.all() 
     return render(request, 'teachers/teachers.html', {'teachers': teachers})
 
+
+@login_required(login_url='/admin/login/')
+def teachersBulkAddView(request):
+    form = BulkTeachersForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        created = 0
+        for teacher_data in form.cleaned_data['teachers']:
+            _, was_created = Teacher.objects.get_or_create(
+                search_name=teacher_data['search_name'],
+                defaults=teacher_data,
+            )
+            created += was_created
+        messages.success(request, f'Добавлено преподавателей: {created}. Дубликаты пропущены.')
+        return redirect('teachers')
+    if request.method == 'POST' and not form.is_valid():
+        messages.error(request, 'Исправьте ошибки в списке преподавателей.')
+    return render(request, 'teachers/teachers_bulk_add.html', {'form': form})
+
 @login_required(login_url='/admin/login/')
 def teachersAddView(request):
     form = TeacherForm(request.POST or None)
@@ -432,6 +536,24 @@ def teachersDeleteView(request, id):
 def groupsView(request):
     groups = Group.objects.all()
     return render(request, 'groups/groups.html', {'groups': groups})
+
+
+@login_required(login_url='/admin/login/')
+def groupsBulkAddView(request):
+    form = BulkGroupsForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        created = 0
+        for group_data in form.cleaned_data['groups']:
+            _, was_created = Group.objects.get_or_create(
+                code=group_data['code'],
+                defaults=group_data,
+            )
+            created += was_created
+        messages.success(request, f'Добавлено групп: {created}. Дубликаты пропущены.')
+        return redirect('groups')
+    if request.method == 'POST' and not form.is_valid():
+        messages.error(request, 'Исправьте ошибки в списке групп.')
+    return render(request, 'groups/groups_bulk_add.html', {'form': form})
 
 @login_required(login_url='/admin/login/')
 def groupsAddView(request):

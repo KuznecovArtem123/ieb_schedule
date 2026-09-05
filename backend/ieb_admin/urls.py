@@ -9,11 +9,13 @@ urlpatterns = [
     path('groups/edit/<int:id>', views.groupsEditView, name='editGroup'),
     path('groups/delete/<int:id>', views.groupsDeleteView, name='deleteGroup'),
     path('groups/add', views.groupsAddView, name='addGroup'),
+    path('groups/bulk-add', views.groupsBulkAddView, name='bulkAddGroups'),
     path('groups/', views.groupsView, name='groups'),
     # teachers
     path('teachers/edit/<int:id>', views.teachersEditView, name='editTeacher'),
     path('teachers/delete/<int:id>', views.teachersDeleteView, name='deleteTeacher'),
     path('teachers/add', views.teachersAddView, name='addTeacher'),
+    path('teachers/bulk-add', views.teachersBulkAddView, name='bulkAddTeachers'),
     path('teachers/', views.teachersView, name='teachers'),
     # schedule
     path('schedule/edit/<int:id>', views.editLesson, name='editLesson'),
@@ -21,6 +23,8 @@ urlpatterns = [
     path('schedule/edit/', views.editSchedule, name='editSchedule'),
     path('schedule/add', views.addLesson, name='addLesson'),
     path('schedule/delete', views.deleteSchedule, name='deleteSchedule'),
+    path('academic-data/import', views.academicDataImportView, name='academicDataImport'),
+    path('academic-data/import/confirm', views.academicDataImportConfirmView, name='academicDataImportConfirm'),
         # upload
     path('schedule/process/cancel/', views.cancelProcessView, name='cancelProcess'),
     path('schedule/process/', views.processView, name='process'),

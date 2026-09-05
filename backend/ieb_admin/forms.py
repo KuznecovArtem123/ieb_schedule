@@ -85,6 +85,121 @@ class GroupForm(forms.ModelForm):
         }
 
 
+class BulkTeachersForm(forms.Form):
+    teachers = forms.CharField(
+        label='Список преподавателей',
+        widget=forms.Textarea(attrs={
+            **FORM_CONTROL,
+            'rows': 12,
+            'placeholder': 'Волков А.В.\nАзанчевский В.В.',
+        }),
+        help_text='Один преподаватель в строке: Фамилия И.О.',
+    )
+
+    def clean_teachers(self):
+        lines = [line.strip() for line in self.cleaned_data['teachers'].splitlines() if line.strip()]
+        teacher_pattern = re.compile(
+            r'^(?P<last_name>[А-ЯЁ][а-яё-]+)\s+'
+            r'(?P<first_initial>[А-ЯЁ])\.?'
+            r'(?:\s*)(?P<patronymic_initial>[А-ЯЁ])?\.?$'
+        )
+        parsed = []
+        errors = []
+        seen = set()
+
+        for line_number, line in enumerate(lines, start=1):
+            match = teacher_pattern.fullmatch(line)
+            if not match:
+                errors.append(f'Строка {line_number}: «{line}» — используйте формат «Фамилия И.О.»')
+                continue
+
+            data = match.groupdict()
+            search_name = f"{data['last_name']} {data['first_initial']}."
+            if data['patronymic_initial']:
+                search_name += f"{data['patronymic_initial']}."
+
+            if search_name.casefold() in seen:
+                continue
+            seen.add(search_name.casefold())
+            parsed.append({
+                'last_name': data['last_name'],
+                'first_name': data['first_initial'],
+                'patronymic': data['patronymic_initial'] or '',
+                'search_name': search_name,
+            })
+
+        if errors:
+            raise ValidationError(errors)
+        if not parsed:
+            raise ValidationError('Добавьте хотя бы одного преподавателя.')
+        return parsed
+
+
+class BulkGroupsForm(forms.Form):
+    groups = forms.CharField(
+        label='Список групп',
+        widget=forms.Textarea(attrs={
+            **FORM_CONTROL,
+            'rows': 12,
+            'placeholder': 'СПО C7124Б Информационные системы и программирование',
+        }),
+        help_text='Одна группа в строке: ОТДЕЛЕНИЕ КОД ПРОФЕССИЯ',
+    )
+
+    def clean_groups(self):
+        lines = [line.strip() for line in self.cleaned_data['groups'].splitlines() if line.strip()]
+        department_names = {'СПО': Group.Department.SPO, 'SPO': Group.Department.SPO, 'ВО': Group.Department.VO, 'VO': Group.Department.VO}
+        parsed = []
+        errors = []
+        seen = set()
+
+        for line_number, line in enumerate(lines, start=1):
+            parts = line.split(maxsplit=2)
+            if len(parts) != 3 or parts[0].upper() not in department_names:
+                errors.append(f'Строка {line_number}: «{line}» — используйте формат «СПО C7124Б Профессия».')
+                continue
+
+            department, code, profession = parts
+            code = code.strip()
+            profession = profession.strip()
+            if not code or not profession:
+                errors.append(f'Строка {line_number}: укажите код и профессию группы.')
+                continue
+            if code.casefold() in seen:
+                continue
+            seen.add(code.casefold())
+            parsed.append({
+                'department': department_names[department.upper()],
+                'code': code,
+                'profession': profession,
+                'course': 1,
+            })
+
+        if errors:
+            raise ValidationError(errors)
+        if not parsed:
+            raise ValidationError('Добавьте хотя бы одну группу.')
+        return parsed
+
+
+class AcademicDataImportForm(forms.Form):
+    edu = forms.ChoiceField(
+        label='Отделение групп',
+        choices=Schedule.Edu.choices,
+        widget=forms.Select(attrs=FORM_CONTROL),
+    )
+    schedule = forms.FileField(
+        label='Файл расписания Excel',
+        widget=forms.ClearableFileInput(attrs={**FORM_CONTROL, 'accept': '.xlsx'}),
+    )
+
+    def clean_schedule(self):
+        file = self.cleaned_data['schedule']
+        if not file.name.lower().endswith('.xlsx'):
+            raise ValidationError('Файл обязательно должен иметь расширение .xlsx')
+        return file
+
+
 class LessonAdminForm(forms.ModelForm):
     group = forms.ModelChoiceField(
         queryset=Group.objects.all().order_by('code'),

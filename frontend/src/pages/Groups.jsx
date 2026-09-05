@@ -11,6 +11,7 @@ const Groups = () => {
     useEffect(() => {
         const fetchGroups = async () => {
             try {
+                setLoading(true)
                 const data = await groupService.get(category);
                 setGroups(data);
             } catch (error) {

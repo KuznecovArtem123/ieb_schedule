@@ -1,0 +1,18 @@
+{% extends "base.html" %} {% block content %}
+<h3 class="mb-4">Добавить преподавателей списком</h3>
+
+<form method="post" class="d-flex flex-column w-50" novalidate>
+  {% csrf_token %} {% if form.non_field_errors %}
+  <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+  {% endif %} {% include "components/form_field.html" with field=form.teachers
+  %}
+  <div class="d-flex">
+    <a class="button button--secondary me-auto" href="{% url 'teachers' %}"
+      >Отмена</a
+    >
+    <button type="submit" class="button button--primary">
+      Добавить список
+    </button>
+  </div>
+</form>
+{% endblock content %}
