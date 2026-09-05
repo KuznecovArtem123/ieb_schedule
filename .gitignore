@@ -80,6 +80,8 @@ celerybeat-schedule
 # SageMath parsed files
 *.sage.py
 
+docker-compose.override.yml
+
 # dotenv
 .env
 
