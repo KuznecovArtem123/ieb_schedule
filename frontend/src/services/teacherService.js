@@ -5,8 +5,8 @@ export const teacherService = {
         const response = await axiosClient.get(`/teachers`);
         return response.data;
     },
-    getLessons: async (id) => {
-        const response = await axiosClient.get(`/lessons/fromTeacher/${id}`);
+    getLessons: async (id, week = 'this') => {
+        const response = await axiosClient.get(`/lessons/fromTeacher/${id}?week=${week}`);
         return response.data;
     }
 };
