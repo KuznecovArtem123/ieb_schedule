@@ -1,5 +1,12 @@
-from django.urls import path, include
-from .views import LessonView, TeacherView, GroupView, GroupLessonsView, TeacherLessonsView
+from django.urls import path
+
+from .views import (
+    GroupLessonsView,
+    GroupView,
+    LessonView,
+    TeacherLessonsView,
+    TeacherView,
+)
 
 urlpatterns = [
     path('lessons/fromGroup/<int:id>', GroupLessonsView.as_view(), name='api_lessonsFromGroup'),

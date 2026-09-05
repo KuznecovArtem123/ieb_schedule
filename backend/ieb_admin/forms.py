@@ -7,9 +7,9 @@ from django.core.exceptions import ValidationError
 from django.forms import formset_factory
 from django.utils import timezone
 
-from .models import Schedule
-from schedule.models import Lesson, Teacher, Group
+from schedule.models import Group, Lesson, Teacher
 
+from .models import Schedule
 
 FORM_CONTROL = {'class': 'form-control'}
 FORM_CONTROL_SM = {'class': 'form-control form-control-sm'}

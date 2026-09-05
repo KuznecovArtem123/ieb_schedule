@@ -1,11 +1,13 @@
-from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from .serializers import LessonSerializer, GroupSerializer, TeacherSerializer
-from .models import Lesson, Teacher, Group
-from ieb_admin.models import Schedule
+from django.shortcuts import get_object_or_404
 from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from ieb_admin.models import Schedule
+
+from .models import Group, Teacher
+from .serializers import GroupSerializer, LessonSerializer, TeacherSerializer
+
 
 class LessonView(APIView):
     def get(self, request):

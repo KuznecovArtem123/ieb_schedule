@@ -1,0 +1,6 @@
+[tool.ruff.lint]
+ignore = [
+    "RUF012",
+    "EXE001",
+    "BLE001",
+]

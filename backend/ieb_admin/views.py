@@ -1,35 +1,37 @@
 import os
 from uuid import uuid4
 
-from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
+from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
 from django.core.cache import cache
 from django.core.files import File
 from django.core.files.storage import default_storage
 from django.db import transaction
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
-from .models import Schedule
-from .schedule_rollover import maybe_rollover_schedules
+
 from schedule.models import *
-from .utils.ScheduleReader import ScheduleReader
-from .utils.academic_data import AcademicDataParser
-from .upload_cleanup import cancel_pending_schedule, complete_pending_upload
+
 from .forms import (
+    AcademicDataImportForm,
+    AdminLoginForm,
     BulkGroupsForm,
     BulkTeachersForm,
-    AdminLoginForm,
     GroupForm,
     LessonAdminForm,
     LessonErrorFormSet,
     ScheduleDeleteForm,
     ScheduleUploadForm,
-    AcademicDataImportForm,
     TeacherForm,
     initial_from_schedule_error,
 )
+from .models import Schedule
+from .schedule_rollover import maybe_rollover_schedules
+from .upload_cleanup import cancel_pending_schedule, complete_pending_upload
+from .utils.academic_data import AcademicDataParser
+from .utils.ScheduleReader import ScheduleReader
 
 
 # auth

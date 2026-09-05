@@ -1,12 +1,14 @@
 import os
+
 import openpyxl
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from openpyxl.cell import MergedCell
 
-# Импортируем твои реальные модели
-from schedule.models import Teacher, Group
 from ieb_admin.models import Schedule
+
+# Импортируем твои реальные модели
+from schedule.models import Group, Teacher
 
 
 class Command(BaseCommand):

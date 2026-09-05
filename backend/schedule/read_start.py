@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from schedule.models import Lesson, Teacher, Group, ScheduleError
 from ieb_admin.utils.ScheduleReader import ScheduleReader
+from schedule.models import Group, Lesson, ScheduleError, Teacher
 
 reader = ScheduleReader(
     Path('media/schedules/schedule.xlsx'),
