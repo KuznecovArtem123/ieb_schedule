@@ -32,10 +32,11 @@ class GroupLessonsView(APIView):
     
 class TeacherLessonsView(APIView):
     def get(self, request, id):
+        week = request.GET.get('week') or 'this'
 
         teacher = get_object_or_404(Teacher, id=id)
 
-        lessons = teacher.lessons.all()
+        lessons = teacher.lessons.filter(schedule__week=week).all()
         serializer = LessonSerializer(lessons, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
