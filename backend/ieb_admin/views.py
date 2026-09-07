@@ -168,14 +168,9 @@ def academicDataImportConfirmView(request):
                     defaults={'profession': profession, 'department': department, 'course': 1},
                 )
             for name in teachers:
-                parts = name.replace('.', '').split()
                 Teacher.objects.get_or_create(
                     search_name=name,
-                    defaults={
-                        'last_name': parts[0],
-                        'first_name': parts[1][0] if len(parts) > 1 else '',
-                        'patronymic': parts[2][0] if len(parts) > 2 else '',
-                    },
+                    defaults=AcademicDataParser.teacher_fields(name),
                 )
     except Exception:
         messages.error(request, 'Не удалось сохранить данные из Excel.')

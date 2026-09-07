@@ -57,10 +57,21 @@ class AcademicDataParser:
             return set()
         names = set()
         for match in self.teacher_pattern.findall(value.replace('\n', ' ')):
-            normalized = re.sub(r'\s+', ' ', match).strip()
+            parts = re.split(r'\s+', match.strip())
+            normalized = f'{parts[0]} {"".join(parts[1:])}'
             if normalized.lower() not in {'подгруппа', 'преподаватель', 'фио'}:
                 names.add(normalized)
         return names
+
+    @staticmethod
+    def teacher_fields(name):
+        last_name, initials = name.split(maxsplit=1)
+        initials = re.sub(r'[\s.]', '', initials)
+        return {
+            'last_name': last_name,
+            'first_name': initials[:1],
+            'patronymic': initials[1:2],
+        }
 
     def parse(self, file_path):
         groups = {}
