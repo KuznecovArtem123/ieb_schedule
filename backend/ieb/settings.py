@@ -135,13 +135,11 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 CORS_ALLOWED_ORIGINS = [
-    "http://ineb-raspisanie.ru",
-    "https://ineb-raspisanie.ru",
-    "http://127.0.0.1:8000",
-    "http://localhost:8000",
+    "https://ineb-schedule.ru",
+    "http://localhost"
 ]
 
-CSRF_TRUSTED_ORIGINS = os.getenv(
-    'DJANGO_ALLOWED_HOSTS',
-    os.getenv('ALLOWED_HOSTS', 'localhost 127.0.0.1'),
-).replace(',', ' ').split()
+CSRF_TRUSTED_ORIGINS = [
+    "https://ineb-schedule.ru",
+    "http://localhost"
+]
