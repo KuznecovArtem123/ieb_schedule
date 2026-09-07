@@ -12,8 +12,6 @@
     --weekday-border-odd: rgba(49,166,255,0.82);
     --weekday-border-even: rgba(248,140,73,0.83);
     --weekday-text: #ffffff;
-    --pair-subject: #333333;
-    --button: #f1f0ff;
     --button-active: rgba(224,234,252,0.9);
     --button-svg: #2B60A5;
     --shadow: rgba(37,99,235,0.10);
@@ -323,8 +321,10 @@ h2 {
 
 }
 .pair-time-vertical {
+        padding: 16px 4px;
     display: flex;
     flex-direction: column;
+    
     align-items: flex-end;
     justify-content: center;
     min-width: 48px;
@@ -386,7 +386,69 @@ body {
     .pair-row {
         font-size: 0.97rem;
     }
-        .nav_buttons--teachers {
+    .nav_buttons--teachers {
         gap: 10px;
+    }
+    .mobile-bottom-nav {
+        position: fixed;
+        right: 12px;
+        bottom: max(12px, env(safe-area-inset-bottom));
+        left: 12px;
+        z-index: 100;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+        padding: 6px;
+        background: color-mix(in srgb, var(--container-bg) 92%, transparent);
+        border: 1px solid rgba(43, 96, 165, 0.14);
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(33, 62, 103, 0.2);
+        backdrop-filter: blur(16px);
+    }
+    .mobile-bottom-nav__item {
+        display: flex;
+        min-height: 54px;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border: 0;
+        border-radius: 13px;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        font: inherit;
+        font-size: 0.82rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+    .mobile-bottom-nav__item:hover,
+    .mobile-bottom-nav__item:focus-visible {
+        color: var(--primary);
+        outline: none;
+    }
+    .mobile-bottom-nav__item:active {
+        transform: scale(0.97);
+    }
+    .mobile-bottom-nav__item.is-active {
+        background: var(--button-active);
+        color: var(--primary);
+        box-shadow: inset 0 0 0 1px rgba(43, 96, 165, 0.08);
+    }
+    .mobile-bottom-nav__icon {
+        font-size: 1.25rem;
+        line-height: 1;
+    }
+}
+
+@media (min-width: 481px) {
+    .mobile-bottom-nav {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding-bottom: calc(88px + env(safe-area-inset-bottom));
     }
 }

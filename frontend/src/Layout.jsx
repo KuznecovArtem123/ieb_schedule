@@ -2,6 +2,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import Back from './components/Back';
 import Logo from './components/Logo';
 import Scroll from './components/Scroll';
+import MobileBottomNav from './components/MobileBottomNav';
 
 export default function Layout() {
     const location = useLocation();
@@ -12,6 +13,7 @@ export default function Layout() {
             <Logo />
             <Outlet />
             <Scroll></Scroll>
+            <MobileBottomNav />
         </div>
     );
 }
