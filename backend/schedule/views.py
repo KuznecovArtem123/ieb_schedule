@@ -23,7 +23,6 @@ class LessonView(APIView):
 class GroupLessonsView(APIView):
     def get(self, request, id):
         week = request.GET.get('week') or 'this'
-        print('week')
         group = get_object_or_404(Group, id=id)
 
         lessons = group.lessons.filter(schedule__week=week).all()

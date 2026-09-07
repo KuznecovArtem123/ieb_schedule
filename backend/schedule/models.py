@@ -46,7 +46,7 @@ class Teacher(models.Model):
     )
 
     def __str__(self):
-        return f"{self.last_name} {self.first_name[0]}. {self.patronymic[0] if self.patronymic else ''}."
+        return self.search_name
 
     class Meta:
         verbose_name = "Преподаватель"
