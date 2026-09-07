@@ -6,7 +6,7 @@ import MobileBottomNav from './components/MobileBottomNav';
 
 export default function Layout() {
     const location = useLocation();
-    const showBack = location.pathname !== '/' && location.pathname !== '/404';
+    const showBack = location.pathname !== '/' && location.pathname !== '/404' && location.pathname !== '/settings';
     return (
         <div className='container'>
             {showBack && <Back />}

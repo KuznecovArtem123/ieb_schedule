@@ -426,6 +426,7 @@ body {
     .mobile-bottom-nav__item:focus-visible {
         color: var(--primary);
         outline: none;
+        -webkit-tap-highlight-color: transparent;
     }
     .mobile-bottom-nav__item:active {
         transform: scale(0.97);

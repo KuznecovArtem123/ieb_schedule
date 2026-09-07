@@ -6,6 +6,7 @@ import { Routes, Route } from 'react-router-dom';
 import Teachers from './pages/Teachers';
 import Schedule from './pages/Schedule';
 import TeacherSchedule from './pages/TeacherSchedule';
+import Settings from './pages/Settings';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path='/schedule/:id' element={<Schedule></Schedule>}></Route>
         <Route path='/teacher/:id' element={<TeacherSchedule></TeacherSchedule>}></Route>
         <Route path='/teachers' element={<Teachers></Teachers>}></Route>
+        <Route path='/settings' element={<Settings></Settings>}></Route>
         <Route path="*" element={<NotFound/>} />
       </Route>
     </Routes>

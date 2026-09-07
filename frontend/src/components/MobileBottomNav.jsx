@@ -3,19 +3,22 @@ import { NavLink, useLocation } from 'react-router-dom';
 
 function MobileBottomNav() {
     const scheduleRoutes = ['/', '/edu/', '/schedule/', '/teacher/', '/teachers'];
-    const [scheduleActive, activateSchedule] = useState(false);
+    const [scheduleActive, activateSchedule] = useState(true);
+    const [settingsActive, activateSettings] = useState(false);
     const location = useLocation();
 
     useEffect(() => {
-        const loadScheduleActivation = () => {
+        const recognizeRoute = () => {
             const isScheduleRoute = scheduleRoutes.some((route) =>
                 route === '/' ? location.pathname === '/' : location.pathname.startsWith(route)
             );
+            const isSettingsRoute = location.pathname.startsWith('/settings')
 
-            activateSchedule(isScheduleRoute);
-        }
+            activateSettings(isSettingsRoute) 
+            activateSchedule(isScheduleRoute)
+        } 
         
-        loadScheduleActivation()
+        recognizeRoute()
     }, [location.pathname])
     return (
         <nav className="mobile-bottom-nav" aria-label="Основная навигация">
@@ -27,10 +30,13 @@ function MobileBottomNav() {
                 <i className="bi bi-calendar3 mobile-bottom-nav__icon" aria-hidden="true"></i>
                 <span>Расписание</span>
             </NavLink>
-            <button className="mobile-bottom-nav__item" type="button" disabled>
+            <NavLink className={`mobile-bottom-nav__item${settingsActive ? ' is-active' : ''}`}
+                to="/settings"
+                end
+                >
                 <i className="bi bi-sliders2 mobile-bottom-nav__icon" aria-hidden="true"></i>
                 <span>Настройки</span>
-            </button>
+            </NavLink>
         </nav>
     );
 }
