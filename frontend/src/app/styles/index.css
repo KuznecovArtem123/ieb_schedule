@@ -1,9 +1,29 @@
-/* --- CSS-переменные для тем --- */
-:root {
+@import "tailwindcss";
+@import "@heroui/styles";
+
+@theme {
+    --color-bg-gradient-start: #e0eafc;
+    --color-bg-gradient-end: #cfdef3;
+    --color-primary: #2B60A5;
+    --color-accent: #ff9800;
+    --color-container-bg: rgba(255,255,255,0.97);
+    --color-muted: #888888;
+    --color-card: #f4f7fb;
+    --color-weekday-odd: #00a8f1;
+    --color-weekday-even: #ff9900d3;
+    --color-weekday-border-odd: rgba(49,166,255,0.82);
+    --color-weekday-border-even: rgba(248,140,73,0.83);
+    --color-weekday-text: #ffffff;
+    --color-button-active: rgba(224,234,252,0.9);
+    --color-button-svg: #2B60A5;
+    
+}
+
+/* :root {
     --bg-gradient-start: #e0eafc;
     --bg-gradient-end: #cfdef3;
-    --primary: #2B60A5; /* синий */
-    --accent: #ff9800; /* оранжевый */
+    --primary: #2B60A5;
+    --accent: #ff9800;
     --container-bg: rgba(255,255,255,0.97);
     --muted: #888888;
     --card-bg: #f4f7fb;
@@ -15,9 +35,9 @@
     --button-active: rgba(224,234,252,0.9);
     --button-svg: #2B60A5;
     --shadow: rgba(37,99,235,0.10);
-}
+} */
+/* 
 
-/* Тёмная тема (Telegram-like) */
 .theme-dark {
     --bg-gradient-start: #0b1220;
     --bg-gradient-end: #071025;
@@ -38,7 +58,6 @@
     --shadow: rgba(0,0,0,0.5);
 }
 
-/* Кнопка возврата наверх */
 .scroll-to-top {
     position: fixed;
     right: 18px;
@@ -82,7 +101,6 @@
 .scroll-to-top svg {
     display: block;
 }
-/* Кнопки переключения недели */
 .week-switch-buttons {
     display: flex;
     gap: 12px;
@@ -141,7 +159,6 @@
     font-weight: 600;
 }
 
-/* Логотип */
 .logo-ineb {
     display: block;
     margin: 0 auto 18px auto;
@@ -233,7 +250,6 @@ h2 {
     transform: scale(0.98);
 }
 
-/* --- Расписание --- */
 .weekday-block {
     margin-bottom: 28px;
     border-radius: 20px;
@@ -344,7 +360,6 @@ h2 {
 }
 
 
-/* Сообщение об отсутствии групп */
 .no-groups {
     text-align: center;
     color: #888;
@@ -452,4 +467,4 @@ body {
     .container {
         padding-bottom: calc(88px + env(safe-area-inset-bottom));
     }
-}
+}  */

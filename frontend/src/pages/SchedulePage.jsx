@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams, useParams } from "react-router-dom";
-import { groupService } from '../services/groupService';
-import Lessons from '../components/Lessons';
+import { useSearchParams, useParams, useMatch } from "react-router-dom";
 
-function Schedule() {
+import { groupService } from '../entities/group/api/groupService';
+import { teacherService } from '../entities/teacher/api/teacherService';
+import Lessons from '../widgets/Lessons';
+
+function SchedulePage() {
     const { id } = useParams();
     const [searchParams] = useSearchParams();
 
@@ -13,8 +15,10 @@ function Schedule() {
 
     useEffect(() => {
         const fetchLessons = async () => {
+            const isTeacherRoute = useMatch('/teacher/:id')
+            const service = isTeacherRoute ? teacherService : groupService
             try {
-                const data = await groupService.getLessons(id, weekValue);
+                const data = await service.getLessons(id, weekValue);
                 setLessons(data);
             } catch (error) {
                 console.error('Ошибка загрузки', error);
@@ -31,4 +35,4 @@ function Schedule() {
     } else return <Lessons lessons={lessons} weekValue={weekValue}></Lessons>
 }
 
-export default Schedule;
+export default SchedulePage;

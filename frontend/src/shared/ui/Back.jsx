@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom';
-
 function Back() {
     const navigate = useNavigate();
 

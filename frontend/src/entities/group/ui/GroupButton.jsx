@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-function Group(props) {
+function GroupButton(props) {
     return (
         <Link className="redirect_button" to={`/schedule/${props.id}/?week=this`}>
             {props.profession} {props.code}
@@ -8,4 +8,4 @@ function Group(props) {
     );
 }
 
-export default Group;
+export default GroupButton;

@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { groupService } from '../services/groupService';
 import { useParams } from "react-router-dom";
-import Group from '../components/Group';
 
-const Groups = () => {
+import { groupService } from '../entities/group/api/groupService';
+import GroupButton from '../entities/group/ui/GroupButton';
+
+const GroupsPage = () => {
     const { category } = useParams();
     const [groups, setGroups] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -27,14 +28,13 @@ const Groups = () => {
     if (loading) return <h2>Загрузка...</h2>;
     if (!groups) return <p className='no-groups'>Группы не найдены</p>;
 
-    const content = groups.map((elem) => {
-        return <Group key={elem.id} id={elem.id} profession={elem.profession} code={elem.code}></Group>
-    });
     return (
         <div className='nav_buttons--groups'>
-            {content}
+            {groups.map((elem) => (
+                <GroupButton key={elem.id} id={elem.id} profession={elem.profession} code={elem.code} />
+            ))}
         </div>
     );
 };
 
-export default Groups;
+export default GroupsPage;

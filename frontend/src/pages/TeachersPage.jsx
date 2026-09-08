@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
-import Teacher from '../components/Teacher';
-import { teacherService } from '../services/teacherService';
 
-const Teachers = () => {
+import TeacherButton from '../entities/teacher/ui/TeacherButton';
+import { teacherService } from '../entities/teacher/api/teacherService';
+
+const TeachersPage = () => {
     const { category } = useParams();
     const [teachers, setTeachers] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -27,14 +28,13 @@ const Teachers = () => {
     if (loading) return <h2>Загрузка...</h2>;
     if (!teachers) return <p className='no-teachers'>Преподаватели не найдены</p>;
 
-    const content = teachers.map((elem) => {
-        return <Teacher key={elem.id} id={elem.id} name={elem.search_name}></Teacher>
-    });
     return (
         <div className='nav_buttons--teachers'>
-            {content}
+            {teachers.map((elem) => (
+                <TeacherButton key={elem.id} id={elem.id} name={elem.search_name} />
+            ))}
         </div>
     );
 };
 
-export default Teachers;
+export default TeachersPage;

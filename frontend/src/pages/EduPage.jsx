@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-function Edu() {
+function EduPage() {
     return (
         <div className="nav_buttons--groups">
             <Link className="redirect_button" to="/edu/spo">Расписание СПО</Link>
@@ -10,4 +10,4 @@ function Edu() {
     )
 }
 
-export default Edu;
+export default EduPage;

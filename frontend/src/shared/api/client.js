@@ -7,5 +7,11 @@ const axiosClient = axios.create({
   },
 });
 
+const templateService = {
+  get: async (route) => {
+    const response = await axiosClient.get(route);
+    return response.data;
+  }
+};
 
 export default axiosClient;

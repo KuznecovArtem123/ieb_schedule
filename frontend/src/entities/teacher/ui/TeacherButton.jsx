@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-function Teacher(props) {
+function TeacherButton(props) {
     return (
         <Link className="redirect_button" to={`/teacher/${props.id}/?week=this`}>
             {props.name}
@@ -8,4 +8,4 @@ function Teacher(props) {
     );
 }
 
-export default Teacher;
+export default TeacherButton;

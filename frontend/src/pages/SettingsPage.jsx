@@ -1,4 +1,4 @@
-function Settings() {
+function SettingsPage() {
     return (
         <div className="nav_buttons--groups">
             Настройки
@@ -6,4 +6,4 @@ function Settings() {
     )
 }
 
-export default Settings;
+export default SettingsPage;
