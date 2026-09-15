@@ -11,11 +11,8 @@ function Back() {
     };
     
     return (
-        <button className="back_button" to="/" title="Назад" onClick={handleBack}>
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="16" cy="16" r="16" fill="#f5f8ff" />
-                <path d="M19 9L13 16L19 23" stroke="#2563eb" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
+        <button className="grid h-[58px] w-[58px] shrink-0 place-items-center rounded-full border-0 bg-white text-[#2188ee] shadow-[0_8px_25px_rgba(72,117,174,0.11)]" title="Назад" onClick={handleBack}>
+            {">"}
         </button>
     );
 }

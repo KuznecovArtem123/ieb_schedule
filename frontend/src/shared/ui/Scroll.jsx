@@ -18,13 +18,13 @@ function Scroll() {
     };
     return (
         <button
-            className={`scroll-to-top ${isVisible ? 'visible' : ''}`}
+            className={`fixed bottom-24 right-5 z-20 grid h-12 w-12 place-items-center rounded-full border-0 bg-white shadow-lg transition ${isVisible ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
             onClick={scrollToTop}
             id="scrollToTopBtn"
             title="Наверх">
             <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="18" cy="18" r="18" fill="#f5f8ff" />
-                <path d="M10 23L18 13L26 23" stroke="#2563eb" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M10 23L18 13L26 23" stroke="#2188ee" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
         </button>
     );

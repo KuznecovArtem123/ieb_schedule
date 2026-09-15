@@ -7,11 +7,16 @@ function Header() {
     const showBack = location.pathname !== '/' && location.pathname !== '/404' && location.pathname !== '/settings';
 
     return (
-        <div className='flex justify-start items-center px-15 py-10 gap-10'>
-            <Logo></Logo>
-            <h1>ИЭБ Расписание</h1>
-            {showBack && <Back />}
-        </div>
+        <header className="flex items-center justify-between gap-3 px-2 pt-[18px]">
+            <div className="flex min-w-0 items-center gap-3">
+                <Logo />
+                <div className="min-w-0">
+                    <div className="truncate text-[2rem] font-extrabold leading-none tracking-[-1.5px]">ИЭБ</div>
+                    <div className="mt-1.5 text-[1.2rem] font-semibold text-[#8b9ab2]">Расписание</div>
+                </div>
+            </div>
+            {showBack ? <Back /> : ''}
+        </header>
     )
 }
 

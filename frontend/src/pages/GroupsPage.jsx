@@ -25,11 +25,11 @@ const GroupsPage = () => {
         fetchGroups();
     }, [category]);
 
-    if (loading) return <h2>Загрузка...</h2>;
-    if (!groups) return <p className='no-groups'>Группы не найдены</p>;
+    if (loading) return <p className="py-12 text-center text-lg font-bold text-[#7897bd]">Загрузка...</p>;
+    if (!groups) return <p className="py-12 text-center text-lg font-bold text-[#ff7912]">Группы не найдены</p>;
 
     return (
-        <div className='nav_buttons--groups'>
+        <div className="mt-6 flex flex-col gap-3">
             {groups.map((elem) => (
                 <GroupButton key={elem.id} id={elem.id} profession={elem.profession} code={elem.code} />
             ))}

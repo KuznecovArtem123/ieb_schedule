@@ -25,11 +25,11 @@ const TeachersPage = () => {
         fetchTeachers();
     }, [category]);
 
-    if (loading) return <h2>Загрузка...</h2>;
-    if (!teachers) return <p className='no-teachers'>Преподаватели не найдены</p>;
+    if (loading) return <p className="py-12 text-center text-lg font-bold text-[#7897bd]">Загрузка...</p>;
+    if (!teachers) return <p className="py-12 text-center text-lg font-bold text-[#ff7912]">Преподаватели не найдены</p>;
 
     return (
-        <div className='nav_buttons--teachers'>
+        <div className="mt-6 flex flex-col gap-3">
             {teachers.map((elem) => (
                 <TeacherButton key={elem.id} id={elem.id} name={elem.search_name} />
             ))}

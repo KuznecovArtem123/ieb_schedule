@@ -12,10 +12,10 @@ function SchedulePage() {
     const [lessons, setLessons] = useState(null);
     const [loading, setLoading] = useState(true);
     const weekValue = searchParams.get('week') || 'this';
+    const isTeacherRoute = useMatch('/teacher/:id');
 
     useEffect(() => {
         const fetchLessons = async () => {
-            const isTeacherRoute = useMatch('/teacher/:id')
             const service = isTeacherRoute ? teacherService : groupService
             try {
                 const data = await service.getLessons(id, weekValue);
@@ -28,10 +28,10 @@ function SchedulePage() {
         };
 
         fetchLessons();
-    }, [id, weekValue]);
+    }, [id, isTeacherRoute, weekValue]);
 
     if (loading) {
-        return <h2>Загрузка...</h2>;
+        return <p className="py-12 text-center text-lg font-bold text-[#7897bd]">Загрузка...</p>;
     } else return <Lessons lessons={lessons} weekValue={weekValue}></Lessons>
 }
 

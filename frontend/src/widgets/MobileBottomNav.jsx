@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
+import {Gear, Calendar} from '@gravity-ui/icons';
 
 function MobileBottomNav() {
     const scheduleRoutes = ['/', '/edu/', '/schedule/', '/teacher/', '/teachers'];
@@ -21,20 +22,20 @@ function MobileBottomNav() {
         recognizeRoute()
     }, [location.pathname])
     return (
-        <nav className="mobile-bottom-nav" aria-label="Основная навигация">
+        <nav className="fixed bottom-[max(12px,env(safe-area-inset-bottom))] left-3 right-3 z-10 grid grid-cols-2 gap-1.5 rounded-[22px] bg-white/95 p-[3px_3px_4px] shadow-[0_10px_30px_rgba(33,62,103,0.16)] backdrop-blur" aria-label="Основная навигация">
             <NavLink
-                className={`mobile-bottom-nav__item${scheduleActive ? ' is-active' : ''}`}
+                className={`grid  place-items-center rounded-[13px] text-[0.72rem] font-bold no-underline transition ${scheduleActive ? 'bg-[#e9f3fd] text-[#2B60A5]' : 'text-[#9aaac2]'}`}
                 to="/"
                 end
             >
-                <i className="bi bi-calendar3 mobile-bottom-nav__icon" aria-hidden="true"></i>
+                <Calendar></Calendar>
                 <span>Расписание</span>
             </NavLink>
-            <NavLink className={`mobile-bottom-nav__item${settingsActive ? ' is-active' : ''}`}
+            <NavLink className={`grid min-h-[54px] place-items-center  rounded-[13px] text-[0.72rem] font-bold no-underline transition ${settingsActive ? 'bg-[#e9f3fd] text-[#2B60A5]' : 'text-[#9aaac2]'}`}
                 to="/settings"
                 end
                 >
-                <i className="bi bi-sliders2 mobile-bottom-nav__icon" aria-hidden="true"></i>
+                <Gear></Gear>
                 <span>Настройки</span>
             </NavLink>
         </nav>
