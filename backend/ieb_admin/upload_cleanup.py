@@ -4,12 +4,14 @@ from .models import Schedule
 
 PENDING_UPLOAD_SESSION_KEY = 'fileId'
 OVERWRITE_SESSION_KEY = 'upload_is_overwrite'
+NOTIFY_SUBSCRIBERS_SESSION_KEY = 'notify_schedule_subscribers'
 
 
 def cancel_pending_schedule(request, schedule=None, notify=False):
     """Удаляет незавершённую загрузку и очищает сессию."""
     file_id = request.session.pop(PENDING_UPLOAD_SESSION_KEY, None)
     is_overwrite = request.session.pop(OVERWRITE_SESSION_KEY, False)
+    request.session.pop(NOTIFY_SUBSCRIBERS_SESSION_KEY, None)
     ScheduleError.objects.all().delete()
 
     target = schedule
@@ -42,3 +44,4 @@ def has_pending_upload(request):
 def complete_pending_upload(request):
     request.session.pop(PENDING_UPLOAD_SESSION_KEY, None)
     request.session.pop(OVERWRITE_SESSION_KEY, None)
+    request.session.pop(NOTIFY_SUBSCRIBERS_SESSION_KEY, None)

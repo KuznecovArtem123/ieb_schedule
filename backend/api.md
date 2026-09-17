@@ -3,11 +3,64 @@
 REST API для получения расписания, групп и преподавателей.  
 Реализация: `schedule/views.py` (Django REST Framework).
 
+Подписки Web Push реализованы в приложении `notifications`. Для отправки используется VAPID.
+
 **Базовый URL:** `/api/`
 
 **Формат:** JSON  
 **Методы:** только `GET`  
 **Авторизация:** не требуется (открытые эндпоинты)
+
+---
+
+## Web Push
+
+### Получить VAPID public key
+
+```
+GET /api/notifications/vapid-public-key/
+```
+
+Ответ содержит `publicKey`, который PWA передаст в `pushManager.subscribe()`.
+
+### Сохранить подписку
+
+```
+POST /api/notifications/subscribe/
+```
+
+Передайте стандартный объект `PushSubscription` из браузера:
+
+```json
+{
+  "endpoint": "https://push.example/…",
+  "expirationTime": null,
+  "keys": {
+    "p256dh": "…",
+    "auth": "…"
+  }
+}
+```
+
+Повторная отправка той же подписки обновляет её без создания дубликата.
+
+### Удалить подписку
+
+```
+DELETE /api/notifications/subscribe/
+```
+
+Тело запроса должно содержать `endpoint`.
+
+### Отправить уведомление
+
+Отправка выполняется сервером, а не публичным HTTP API:
+
+```
+python manage.py send_push "Заголовок" "Текст уведомления" --url /schedule
+```
+
+Для работы команды задайте `WEBPUSH_VAPID_PUBLIC_KEY`, `WEBPUSH_VAPID_PRIVATE_KEY` и `WEBPUSH_VAPID_SUBJECT` в окружении backend. Публичный ключ понадобится frontend для регистрации подписки.
 
 ---
 
