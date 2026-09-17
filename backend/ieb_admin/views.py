@@ -335,14 +335,23 @@ def processView(request):
         return redirect('upload')
 
     schedule_file = get_object_or_404(Schedule, id=file_id)
+    
     reader = ScheduleReader(schedule_file, Teacher, Lesson, Group, ScheduleError)
 
-    mismatch_redirect = _redirect_if_department_mismatch(request, reader, schedule_file)
+    try:
+        mismatch_redirect = _redirect_if_department_mismatch(request, reader, schedule_file)
+    except ValueError as error:
+        _abort_schedule_upload(request, schedule_file, str(error))
+        return redirect('upload')
     if mismatch_redirect:
         return mismatch_redirect
 
     if request.method == 'POST':
-        reader.validate_data(log_errors=False)
+        try:
+            reader.validate_data(log_errors=False)
+        except ValueError as error:
+            _abort_schedule_upload(request, schedule_file, str(error))
+            return redirect('upload')
         exceptions = list(ScheduleError.objects.all().order_by('id'))
         formset = LessonErrorFormSet(request.POST)
 
@@ -384,7 +393,11 @@ def processView(request):
             'formset': formset,
         })
 
-    valid_count, error_count = reader.validate_data()
+    try:
+        valid_count, error_count = reader.validate_data()
+    except ValueError as error:
+        _abort_schedule_upload(request, schedule_file, str(error))
+        return redirect('upload')
 
     if error_count == 0:
         reader.upload_to_db()
