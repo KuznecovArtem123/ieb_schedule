@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {Gear, Calendar} from '@gravity-ui/icons';
 
@@ -24,18 +24,18 @@ function MobileBottomNav() {
     return (
         <nav className="fixed bottom-[max(12px,env(safe-area-inset-bottom))] left-3 right-3 z-10 grid grid-cols-2 gap-1.5 rounded-[22px] bg-white/95 p-[3px_3px_4px] shadow-[0_10px_30px_rgba(33,62,103,0.16)] backdrop-blur" aria-label="Основная навигация">
             <NavLink
-                className={`grid  place-items-center rounded-[13px] text-[0.72rem] font-bold no-underline transition ${scheduleActive ? 'bg-[#e9f3fd] text-[#2B60A5]' : 'text-[#9aaac2]'}`}
+                className={`grid  place-items-center rounded-[13px] text-[0.82rem] font-bold no-underline transition ${scheduleActive ? 'bg-[#e9f3fd] text-[#2B60A5]' : 'text-[#9aaac2]'}`}
                 to="/"
                 end
             >
-                <Calendar></Calendar>
+                <Calendar width="25" height='25'></Calendar>
                 <span>Расписание</span>
             </NavLink>
-            <NavLink className={`grid min-h-[54px] place-items-center  rounded-[13px] text-[0.72rem] font-bold no-underline transition ${settingsActive ? 'bg-[#e9f3fd] text-[#2B60A5]' : 'text-[#9aaac2]'}`}
+            <NavLink className={`grid min-h-[54px] place-items-center  rounded-[13px] text-[0.82rem] font-bold no-underline transition ${settingsActive ? 'bg-[#e9f3fd] text-[#2B60A5]' : 'text-[#9aaac2]'}`}
                 to="/settings"
                 end
                 >
-                <Gear></Gear>
+                <Gear width="25" height='25'></Gear>
                 <span>Настройки</span>
             </NavLink>
         </nav>
