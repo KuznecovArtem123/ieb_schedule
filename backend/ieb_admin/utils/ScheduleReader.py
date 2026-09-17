@@ -86,7 +86,7 @@ class ScheduleReader:
                     result[code] = profession
                     found_codes.add(code)
 
-        not_found = set(code.replace('-', '/') for code in codes) - found_codes
+        not_found = {code.replace('-', '/') for code in codes} - found_codes
 
         if not_found:
             raise ValueError(
