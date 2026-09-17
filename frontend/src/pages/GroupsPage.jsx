@@ -26,7 +26,7 @@ const GroupsPage = () => {
     }, [category]);
 
     if (loading) return <p className="py-12 text-center text-lg font-bold text-[#7897bd]">Загрузка...</p>;
-    if (!groups) return <p className="py-12 text-center text-lg font-bold text-[#ff7912]">Группы не найдены</p>;
+    if (!groups) return <p className="py-12 text-center text-lg font-bold text-[#7897bd]">Группы не найдены</p>;
 
     return (
         <div className="mt-6 flex flex-col gap-3">

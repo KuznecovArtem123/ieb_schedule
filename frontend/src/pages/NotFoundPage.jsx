@@ -1,11 +1,11 @@
-import { Link } from 'react-router-dom';
+import BasicButton from '../shared/ui/BasicButton';
 
 export default function NotFoundPage() {
   return (
     <div>
       <h2>404</h2>
       <h2>Страница не найдена</h2>
-      <Link className='redirect_button' to="/">Вернуться на главную</Link>
+      <BasicButton to="/">Вернуться на главную</BasicButton>
     </div>
   );
 }
