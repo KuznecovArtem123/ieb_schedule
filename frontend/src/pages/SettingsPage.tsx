@@ -1,3 +1,5 @@
+
+import { InstallCard } from '@/features/install-app';
 import { useTheme } from '@/shared/lib/theme';
 import { Switch } from '@heroui/react';
 
@@ -8,6 +10,7 @@ function SettingsPage() {
             <div className="px-2 text-center">
                 <h1 className="text-[2rem] font-black tracking-[-0.04em] text-heading">Настройки</h1>
             </div>
+            <InstallCard/>
 
             <div className="overflow-hidden rounded-[27px] bg-surface p-5 shadow-card">
                 <div className="flex items-center justify-between gap-4">
@@ -16,10 +19,10 @@ function SettingsPage() {
                         <p className="mt-1 text-sm leading-5 text-subtle">Светлая тема / Тёмная тема</p>
                     </div>
                     <Switch
-                    aria-label="Включить тёмную тему"
-                    size="lg"
-                    isSelected={isDark}
-                    onChange={(selected) => setPreference(selected ? 'dark' : 'light')}
+                        aria-label="Включить тёмную тему"
+                        size="lg"
+                        isSelected={isDark}
+                        onChange={(selected) => setPreference(selected ? 'dark' : 'light')}
                     >
                         <Switch.Content>
                             <Switch.Control>
