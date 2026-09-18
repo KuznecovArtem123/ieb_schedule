@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host --mode development --port 8000",
-    "build": "vite build",
+    "build": "tsc --noEmit && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@heroui/react": "^3.2.4",
@@ -30,6 +31,8 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.5.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.70.0",
     "vite": "^8.0.10",
     "vite-plugin-pwa": "^1.3.0"
   }

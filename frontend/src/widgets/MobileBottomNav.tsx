@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {Gear, Calendar} from '@gravity-ui/icons';
 
+const scheduleRoutes = ['/', '/edu/', '/schedule/', '/teacher/', '/teachers'];
+
 function MobileBottomNav() {
-    const scheduleRoutes = ['/', '/edu/', '/schedule/', '/teacher/', '/teachers'];
     const [scheduleActive, activateSchedule] = useState(true);
     const [settingsActive, activateSettings] = useState(false);
     const location = useLocation();

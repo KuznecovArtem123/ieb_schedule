@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 
-import { groupService } from '../entities/group/api/groupService';
-import GroupButton from '../entities/group/ui/GroupButton';
+import { groupService } from '@/entities/group/api/groupService';
+import GroupButton from '@/entities/group/ui/GroupButton';
+import { isEduCategory, type Group } from '@/entities/group/model/types';
 
 const GroupsPage = () => {
-    const { category } = useParams();
-    const [groups, setGroups] = useState(null);
+    const { category: categoryParam } = useParams();
+    const category = isEduCategory(categoryParam) ? categoryParam : 'spo';
+    const [groups, setGroups] = useState<Group[] | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {

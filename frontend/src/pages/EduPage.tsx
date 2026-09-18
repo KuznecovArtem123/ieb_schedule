@@ -1,4 +1,4 @@
-import BasicButton from '../shared/ui/BasicButton';
+import BasicButton from '@/shared/ui/BasicButton';
 
 function EduPage() {
     return (

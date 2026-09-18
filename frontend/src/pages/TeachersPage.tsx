@@ -1,19 +1,20 @@
 import { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 
-import TeacherButton from '../entities/teacher/ui/TeacherButton';
-import { teacherService } from '../entities/teacher/api/teacherService';
+import TeacherButton from '@/entities/teacher/ui/TeacherButton';
+import { teacherService } from '@/entities/teacher/api/teacherService';
+import type { Teacher } from '@/entities/teacher/model/types';
 
 const TeachersPage = () => {
     const { category } = useParams();
-    const [teachers, setTeachers] = useState(null);
+    const [teachers, setTeachers] = useState<Teacher[] | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchTeachers = async () => {
             try {
                 setLoading(true)
-                const data = await teacherService.get(category);
+                const data = await teacherService.get();
                 setTeachers(data);
             } catch (error) {
                 console.error('Ошибка загрузки', error);

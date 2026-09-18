@@ -1,9 +1,15 @@
 import { useNavigate } from 'react-router-dom';
-import LessonCard from '../entities/lesson/ui/LessonCard';
+import LessonCard from '@/entities/lesson/ui/LessonCard';
+import type { Lesson, Week } from '@/entities/lesson/model/types';
 
-function Lessons({lessons, weekValue}) {
+interface LessonsProps {
+    lessons: Lesson[];
+    weekValue: Week;
+};
+
+function Lessons({ lessons, weekValue }: LessonsProps) {
     const navigate = useNavigate();
-    const handleWeekChange = (newWeek) => {
+    const handleWeekChange = (newWeek: Week) => {
         navigate(
             { search: `?week=${newWeek}` },
             { replace: true }
@@ -18,12 +24,12 @@ function Lessons({lessons, weekValue}) {
 
     if (lessons && lessons.length > 0) {
         const weeklist = [...new Set(lessons.map(lesson => lesson.weekday))];
-        
+
         content = weeklist.map((day, dayIndex) => {
             const dayLessons = lessons.filter(l => l.weekday === day);
-            const [_, dateMonth, dateDay] = dayLessons[0].date.split('-');
+            const [, dateMonth, dateDay] = dayLessons[0].date.split('-');
             const theme = dayThemes[dayIndex % dayThemes.length];
-            
+
 
             return (
                 <section key={day} className="mb-[25px] overflow-hidden rounded-[27px] bg-white shadow-[0_4px_10px_rgba(39,82,133,0.08)]">
@@ -40,7 +46,7 @@ function Lessons({lessons, weekValue}) {
                                 classroom={elem.auditorium}
                                 subject={elem.subject}
                                 startTime={elem.start_time.slice(0, 5)}
-                                endTime={elem.end_time.slice(0,5)}
+                                endTime={elem.end_time.slice(0, 5)}
                                 studentsGroup={elem.group_code}
                                 theme={theme}
                             />

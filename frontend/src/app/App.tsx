@@ -1,12 +1,12 @@
 import { Routes, Route } from 'react-router-dom';
 import Layout from './Layout';
 
-import EduPage from '../pages/EduPage';
-import GroupsPage from '../pages/GroupsPage';
-import SchedulePage from '../pages/SchedulePage';
-import TeachersPage from '../pages/TeachersPage';
-import SettingsPage from '../pages/SettingsPage';
-import NotFoundPage from '../pages/NotFoundPage';
+import EduPage from '@/pages/EduPage';
+import GroupsPage from '@/pages/GroupsPage';
+import SchedulePage from '@/pages/SchedulePage';
+import TeachersPage from '@/pages/TeachersPage';
+import SettingsPage from '@/pages/SettingsPage';
+import NotFoundPage from '@/pages/NotFoundPage';
 
 function App() {
   return (

@@ -1,5 +1,5 @@
-import Logo from '../shared/ui/Logo'
-import Back from '../shared/ui/Back';
+import Logo from '@/shared/ui/Logo'
+import Back from '@/shared/ui/Back';
 import { useLocation } from 'react-router-dom';
 
 function Header() {
