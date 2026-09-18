@@ -1,33 +1,14 @@
-import { useState, useEffect } from 'react';
-import { useParams } from "react-router-dom";
-
 import TeacherButton from '@/entities/teacher/ui/TeacherButton';
 import { teacherService } from '@/entities/teacher/api/teacherService';
-import type { Teacher } from '@/entities/teacher/model/types';
+import { useFetch } from '@/shared/lib/useFetch';
+import Status from '@/shared/ui/Status';
 
 const TeachersPage = () => {
-    const { category } = useParams();
-    const [teachers, setTeachers] = useState<Teacher[] | null>(null);
-    const [loading, setLoading] = useState(true);
+    const { data: teachers, loading, error } = useFetch(() => teacherService.get(), []);
 
-    useEffect(() => {
-        const fetchTeachers = async () => {
-            try {
-                setLoading(true)
-                const data = await teacherService.get();
-                setTeachers(data);
-            } catch (error) {
-                console.error('Ошибка загрузки', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchTeachers();
-    }, [category]);
-
-    if (loading) return <p className="py-12 text-center text-lg font-bold text-[#7897bd]">Загрузка...</p>;
-    if (!teachers) return <p className="py-12 text-center text-lg font-bold text-[#7897bd]">Преподаватели не найдены</p>;
+    if (loading) return <Status>Загрузка...</Status>;
+    if (error) return <Status>Не удалось загрузить преподавателей</Status>;
+    if (!teachers?.length) return <Status>Преподаватели не найдены</Status>;
 
     return (
         <div className="mt-6 flex flex-col gap-3">

@@ -12,7 +12,7 @@ function Header() {
                 <Logo />
                 <div className="min-w-0">
                     <div className="truncate text-[2rem] font-extrabold leading-none tracking-[-1.5px]">ИЭБ</div>
-                    <div className="mt-1.5 text-[1.2rem] font-semibold text-[#8b9ab2]">Расписание</div>
+                    <div className="mt-1.5 text-[1.2rem] font-semibold text-muted">Расписание</div>
                 </div>
             </div>
             {showBack ? <Back /> : ''}

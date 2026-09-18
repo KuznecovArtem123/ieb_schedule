@@ -23,8 +23,8 @@ function Scroll() {
             id="scrollToTopBtn"
             title="Наверх">
             <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="18" cy="18" r="18" fill="#f5f8ff" />
-                <path d="M10 23L18 13L26 23" stroke="#2188ee" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+                <circle cx="18" cy="18" r="18" fill="var(--color-surface-scroll)" />
+                <path d="M10 23L18 13L26 23" stroke="var(--color-link)" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
         </button>
     );

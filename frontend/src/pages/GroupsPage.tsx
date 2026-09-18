@@ -1,34 +1,20 @@
-import { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 
 import { groupService } from '@/entities/group/api/groupService';
 import GroupButton from '@/entities/group/ui/GroupButton';
-import { isEduCategory, type Group } from '@/entities/group/model/types';
+import { isEduCategory } from '@/entities/group/model/types';
+import { useFetch } from '@/shared/lib/useFetch';
+import Status from '@/shared/ui/Status';
 
 const GroupsPage = () => {
     const { category: categoryParam } = useParams();
     const category = isEduCategory(categoryParam) ? categoryParam : 'spo';
-    const [groups, setGroups] = useState<Group[] | null>(null);
-    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchGroups = async () => {
-            try {
-                setLoading(true)
-                const data = await groupService.get(category);
-                setGroups(data);
-            } catch (error) {
-                console.error('Ошибка загрузки', error);
-            } finally {
-                setLoading(false);
-            }
-        };
+    const { data: groups, loading, error } = useFetch(() => groupService.get(category), [category]);
 
-        fetchGroups();
-    }, [category]);
-
-    if (loading) return <p className="py-12 text-center text-lg font-bold text-[#7897bd]">Загрузка...</p>;
-    if (!groups) return <p className="py-12 text-center text-lg font-bold text-[#7897bd]">Группы не найдены</p>;
+    if (loading) return <Status>Загрузка...</Status>;
+    if (error) return <Status>Не удалось загрузить группы</Status>;
+    if (!groups?.length) return <Status>Группы не найдены</Status>;
 
     return (
         <div className="mt-6 flex flex-col gap-3">

@@ -8,7 +8,7 @@ interface GroupButtonProps {
 
 function GroupButton(props: GroupButtonProps) {
     return (
-        <BasicButton className="shadow-[0_4px_10px_rgba(39,82,133,0.08)]" to={`/schedule/${props.id}/?week=this`}>
+        <BasicButton className="shadow-card" to={`/schedule/${props.id}/?week=this`}>
             {props.profession} {props.code}
         </BasicButton>
     );

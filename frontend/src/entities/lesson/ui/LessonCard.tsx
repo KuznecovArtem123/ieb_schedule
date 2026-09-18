@@ -33,7 +33,7 @@ function LessonCard({
                 <div className="text-[1.28rem] font-extrabold leading-tight">{subject}</div>
                 <div className="mt-1 text-[1.05rem]">{studentsGroup}</div>
             </div>
-            <div className="flex flex-wrap items-start justify-between gap-3 rounded-xl bg-[#f4f7fb] px-3 py-2.5 text-[0.9rem] font-bold text-[#8996a9]">
+            <div className="flex flex-wrap items-start justify-between gap-3 rounded-xl bg-surface-soft px-3 py-2.5 text-[0.9rem] font-bold text-meta">
                 <span className="flex-1 basis-[145px]">● {teachers.join(', ')}</span>
                 <span className={`text-base ${theme.chip.split(' ')[1]}`}>{classroom ?? '—'}</span>
             </div>
