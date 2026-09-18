@@ -18,7 +18,7 @@ function Scroll() {
     };
     return (
         <button
-            className={`fixed bottom-24 right-5 z-20 grid h-12 w-12 place-items-center rounded-full border-0 bg-white shadow-lg transition ${isVisible ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
+            className={`fixed bottom-24 right-5 z-20 grid h-12 w-12 place-items-center rounded-full border-0 bg-surface shadow-lg transition ${isVisible ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
             onClick={scrollToTop}
             id="scrollToTopBtn"
             title="Наверх">

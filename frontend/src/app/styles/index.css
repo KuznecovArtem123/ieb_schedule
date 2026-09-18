@@ -5,11 +5,14 @@
     /* brand */
     --color-primary: #2B60A5;
     --color-primary-hover: #1474ed;
+    --color-primary-text: #2B60A5;
     --color-accent: #ff7912;
     --color-accent-hover: #e96b0b;
     --color-link: #2188ee;
 
     /* surfaces */
+    --color-page: #edf4ff;
+    --color-surface: #ffffff;
     --color-surface-soft: #f4f7fb;
     --color-surface-scroll: #f5f8ff;
     --color-chip-primary: #e9f3fd;
@@ -17,6 +20,7 @@
     --color-inactive: #B5B7C1;
 
     /* text */
+    --color-body: #1d304b;
     --color-heading: #244b7d;
     --color-status: #7897bd;
     --color-subtle: #8aa1bd;
@@ -24,14 +28,60 @@
     --color-meta: #8996a9;
     --color-nav-idle: #9aaac2;
 
-    /* elevation */
-    --shadow-card: 0 4px 10px rgba(39, 82, 133, 0.08);
-    --shadow-button: 0 10px 24px rgba(31, 126, 238, 0.2);
-    --shadow-button-accent: 0 10px 24px rgba(255, 121, 18, 0.2);
-    --shadow-week: 0 12px 24px rgba(31, 126, 238, 0.25);
-    --shadow-nav: 0 10px 30px rgba(33, 62, 103, 0.16);
-    --shadow-float: 0 8px 25px rgba(72, 117, 174, 0.12);
-    --shadow-page: 0 18px 55px rgba(69, 111, 167, 0.1);
+    --shadow-card: 0 4px 10px var(--shadow-card-color);
+    --shadow-button: 0 10px 24px var(--shadow-button-color);
+    --shadow-button-accent: 0 10px 24px var(--shadow-button-accent-color);
+    --shadow-week: 0 12px 24px var(--shadow-week-color);
+    --shadow-nav: 0 10px 30px var(--shadow-nav-color);
+    --shadow-float: 0 8px 25px var(--shadow-float-color);
+    --shadow-page: 0 18px 55px var(--shadow-page-color);
+}
+
+:root {
+    color-scheme: light;
+
+    --shadow-card-color: rgba(39, 82, 133, 0.08);
+    --shadow-button-color: rgba(31, 126, 238, 0.2);
+    --shadow-button-accent-color: rgba(255, 121, 18, 0.2);
+    --shadow-week-color: rgba(31, 126, 238, 0.25);
+    --shadow-nav-color: rgba(33, 62, 103, 0.16);
+    --shadow-float-color: rgba(72, 117, 174, 0.12);
+    --shadow-page-color: rgba(69, 111, 167, 0.1);
+}
+
+[data-theme="dark"] {
+    color-scheme: dark;
+
+    --color-primary: #3a72b8;
+    --color-primary-hover: #4884cf;
+    --color-primary-text: #7fb0ea;
+    --color-accent: #e8801f;
+    --color-accent-hover: #f2913a;
+    --color-link: #6bb0f5;
+
+    --color-page: #0d1420;
+    --color-surface: #161f2e;
+    --color-surface-soft: #202d42;
+    --color-surface-scroll: #202d42;
+    --color-chip-primary: #1c3350;
+    --color-chip-accent: #3a2a18;
+    --color-inactive: #3f4a5c;
+
+    --color-body: #d7e2f2;
+    --color-heading: #ccdcf5;
+    --color-status: #8aa5c8;
+    --color-subtle: #92a7c3;
+    --color-muted: #93a3bb;
+    --color-meta: #95a3b7;
+    --color-nav-idle: #7a8aa3;
+
+    --shadow-card-color: rgba(0, 0, 0, 0.45);
+    --shadow-button-color: rgba(0, 0, 0, 0.5);
+    --shadow-button-accent-color: rgba(0, 0, 0, 0.5);
+    --shadow-week-color: rgba(0, 0, 0, 0.5);
+    --shadow-nav-color: rgba(0, 0, 0, 0.55);
+    --shadow-float-color: rgba(0, 0, 0, 0.45);
+    --shadow-page-color: rgba(0, 0, 0, 0.5);
 }
 
 /* :root {
@@ -488,9 +538,19 @@ body {
     min-height: 100vh;
     margin: 0;
     padding: 10px;
-    color: #1d304b;
+    color: var(--color-body);
     font-family: "Trebuchet MS", Arial, sans-serif;
-    background: #edf4ff;
+    background-color: var(--color-page);
+}
+
+/* На время смены темы отключаем все переходы: Chromium не перерисовывает
+   свойство, если изменилась только переменная в его var(), а на элементе
+   висит transition. Побочный плюс — тема переключается одним кадром,
+   а не «разъезжается» анимациями разной длительности. */
+html.theme-switching *,
+html.theme-switching *::before,
+html.theme-switching *::after {
+    transition: none !important;
 }
 
 button,

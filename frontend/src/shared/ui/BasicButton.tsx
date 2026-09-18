@@ -8,7 +8,7 @@ interface BasicButtonProps extends ComponentPropsWithoutRef<typeof Link> {
 const variantStyles = {
 	primary: 'bg-primary text-white shadow-button hover:bg-primary-hover',
 	accent: 'bg-primary text-white shadow-button-accent hover:bg-accent-hover',
-	light: 'bg-white text-link shadow-card hover:bg-chip-primary',
+	light: 'bg-surface text-link shadow-card hover:bg-chip-primary',
 };
 
 function BasicButton({ to, children, variant = 'primary', className = '', ...props }: BasicButtonProps) {

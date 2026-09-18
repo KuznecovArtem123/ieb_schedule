@@ -24,7 +24,7 @@ function LessonCard({
 }: LessonCardProps) {
     return (
         <>
-        <article className={` rounded-[27px] bg-white px-[22px] py-5 m-0`}>
+        <article className={` rounded-[27px] bg-surface px-[22px] py-5 m-0`}>
             <div className="flex flex-wrap items-center justify-between gap-2.5">
                 <div className={`rounded-[13px] px-[13px] py-2 text-[0.95rem] font-extrabold ${theme.chip}`}>{num} пара</div>
                 <div className={`rounded-[13px] px-[13px] py-2 text-[0.95rem] font-semibold ${theme.chip}`}><span className="mr-2">◷</span>{startTime} – {endTime}</div>

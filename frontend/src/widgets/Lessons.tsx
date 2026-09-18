@@ -33,7 +33,7 @@ function Lessons({ lessons, weekValue }: LessonsProps) {
 
 
             return (
-                <section key={day} className="mb-[25px] overflow-hidden rounded-[27px] bg-white shadow-card">
+                <section key={day} className="mb-[25px] overflow-hidden rounded-[27px] bg-surface shadow-card">
                     <div className={`flex min-h-[68px] items-center justify-between px-[19px] text-white ${theme.header}`}>
                         <div className="flex items-center gap-3.5 text-[1.15rem] font-extrabold tracking-[0.4px]"><span className="text-[1.6rem]">▣</span>{day}</div>
                         <div className="shrink-0 text-base font-bold">{dateDay}.{dateMonth}</div>

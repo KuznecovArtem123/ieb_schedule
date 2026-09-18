@@ -13,7 +13,7 @@ function Back() {
     };
     
     return (
-        <button className="grid h-[58px] w-[58px] shrink-0 place-items-center rounded-full border-0 bg-white text-link shadow-float" title="Назад" onClick={handleBack}>
+        <button className="grid h-[58px] w-[58px] shrink-0 place-items-center rounded-full border-0 bg-surface text-link shadow-float" title="Назад" onClick={handleBack}>
             <ArrowLeft></ArrowLeft>
         </button>
     );
