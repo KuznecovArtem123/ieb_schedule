@@ -7,6 +7,7 @@ export interface CacheRecord {
     key: string;
     payload: unknown;
     savedAt: number;
+    version?: string;
 }
 
 export interface ScheduleDB extends DBSchema {
@@ -30,7 +31,7 @@ export function getDB(): Promise<IDBPDatabase<ScheduleDB> | null> {
         terminated() {
             dbPromise = null;
         },
-        
+
     }).catch((error: unknown) => {
         console.error('IndexedDB недоступен — работаем без кеша', error);
         return null;

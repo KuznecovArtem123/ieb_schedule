@@ -543,14 +543,10 @@ body {
     background-color: var(--color-page);
 }
 
-/* На время смены темы отключаем все переходы: Chromium не перерисовывает
-   свойство, если изменилась только переменная в его var(), а на элементе
-   висит transition. Побочный плюс — тема переключается одним кадром,
-   а не «разъезжается» анимациями разной длительности. */
 html.theme-switching *,
 html.theme-switching *::before,
 html.theme-switching *::after {
-    transition: none !important;
+    transition-property: margin, transform, translate, opacity !important;
 }
 
 button,

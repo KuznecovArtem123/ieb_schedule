@@ -26,8 +26,8 @@ function commit() {
     root.classList.add('theme-switching');
     resolved = resolve(preference);
     root.dataset.theme = resolved;
-    root.getBoundingClientRect(); 
-    requestAnimationFrame(() => root.classList.remove('theme-switching'));
+    root.getBoundingClientRect();
+    root.classList.remove('theme-switching');
 
     listeners.forEach((notify) => notify());
 }
