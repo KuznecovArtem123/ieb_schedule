@@ -57,15 +57,42 @@ class ScheduleReader:
     
     def parse_groups(self, sheet):
         result = {}
+        codes = self.parse_groups_codes(sheet.title)
+        found_codes = set()
+
         for coordinates in ['C7', 'E7']:
-            codes = self.parse_groups_codes(sheet.title)
+            cell = sheet[coordinates]
+
+            if isinstance(cell, MergedCell):
+                continue
+
+            group_title = cell.value
+
+            if not group_title:
+                continue
+
             for code in codes:
                 code = code.replace('-', '/')
-                if not isinstance(sheet[coordinates], MergedCell):
-                    group_title = sheet[coordinates].value
-                    if group_title and code in group_title:
-                        profession = group_title.replace(code, '').replace('(', '').replace(')', '').strip()
-                        result[code] = profession
+
+                if code in group_title:
+                    profession = (
+                        group_title
+                        .replace(code, '')
+                        .replace('(', '')
+                        .replace(')', '')
+                        .strip()
+                    )
+
+                    result[code] = profession
+                    found_codes.add(code)
+
+        not_found = set(code.replace('-', '/') for code in codes) - found_codes
+
+        if not_found:
+            raise ValueError(
+                f'Не удалось найти коды групп: {", ".join(not_found)}'
+            )
+
         return result
     
     def parse_dates(self):
@@ -362,7 +389,9 @@ class ScheduleReader:
         for item in self.valid_lessons:
             lesson = self.Lesson.objects.create(
                 schedule=self.file_obj,
-                date=item['date_obj'], group=item['group_obj'], order=item['order'],
+                date=item['date_obj'], 
+                group=item['group_obj'], 
+                order=item['order'],
                 start_time=self._parse_time(item['start_time']),
                 end_time=self._parse_time(item['end_time']),
                 subject=item['subject'], auditorium=item['auditorium']

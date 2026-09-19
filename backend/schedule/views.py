@@ -20,6 +20,18 @@ class LessonView(APIView):
         serializer = LessonSerializer(lessons, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
+
+class ScheduleVersionView(APIView):
+    def get(self, request):
+        edu = request.GET.get('edu') or 'spo'
+        week = request.GET.get('week') or 'this'
+        schedule = get_object_or_404(Schedule, edu=edu, week=week)
+
+        return Response({
+            'id': schedule.id,
+            'version': schedule.updated_at,
+        }, status=status.HTTP_200_OK)
+
 class GroupLessonsView(APIView):
     def get(self, request, id):
         week = request.GET.get('week') or 'this'

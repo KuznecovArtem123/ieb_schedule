@@ -1,3 +1,4 @@
+import logging
 import os
 from uuid import uuid4
 
@@ -32,6 +33,11 @@ from .schedule_rollover import maybe_rollover_schedules
 from .upload_cleanup import cancel_pending_schedule, complete_pending_upload
 from .utils.academic_data import AcademicDataParser
 from .utils.ScheduleReader import ScheduleReader
+
+logger = logging.getLogger(__name__)
+
+SCHEDULE_NOTIFICATION_TITLE = 'Расписание обновлено'
+SCHEDULE_NOTIFICATION_BODY = 'Загружено новое расписание: {edu} — {week}.'
 
 
 # auth
@@ -190,7 +196,7 @@ def _clear_pending_upload(request):
         default_storage.delete(pending['file_path'])
 
 
-def _store_pending_upload(request, edu, week, existing_id, uploaded_file):
+def _store_pending_upload(request, edu, week, existing_id, uploaded_file, notify_subscribers):
     _clear_pending_upload(request)
     path = default_storage.save(f'pending_uploads/{uuid4().hex}.xlsx', uploaded_file)
     request.session['pending_upload'] = {
@@ -198,7 +204,27 @@ def _store_pending_upload(request, edu, week, existing_id, uploaded_file):
         'week': week,
         'existing_id': existing_id,
         'file_path': path,
+        'notify_subscribers': notify_subscribers,
     }
+
+
+def _notify_schedule_uploaded(request, schedule_file):
+    if not request.session.get('notify_schedule_subscribers', False):
+        return
+
+    from notifications.services import send_push_notification
+
+    try:
+        send_push_notification(
+            title=SCHEDULE_NOTIFICATION_TITLE,
+            body=SCHEDULE_NOTIFICATION_BODY.format(
+                edu=schedule_file.get_edu_display(),
+                week=schedule_file.get_week_display(),
+            ),
+            url='/',
+        )
+    except Exception:
+        logger.exception('Не удалось отправить уведомление об обновлении расписания.')
 
 
 def _continue_schedule_processing(request, schedule, edu, week, file_obj):
@@ -242,6 +268,7 @@ def _complete_overwrite_upload(request):
     existing.save()
 
     _clear_pending_upload(request)
+    request.session['notify_schedule_subscribers'] = pending.get('notify_subscribers', False)
     request.session['fileId'] = existing.id
     request.session['upload_is_overwrite'] = True
     return redirect('process')
@@ -265,6 +292,8 @@ def uploadView(request):
             edu = form.cleaned_data['edu']
             week = form.cleaned_data['week']
             file = form.cleaned_data['schedule']
+            notify_subscribers = form.cleaned_data['notify_subscribers']
+            request.session['notify_schedule_subscribers'] = notify_subscribers
             pending_id = request.session.get('fileId')
             existing = Schedule.objects.filter(edu=edu, week=week).first()
 
@@ -273,7 +302,9 @@ def uploadView(request):
                     existing.delete()
                     existing = None
                 else:
-                    _store_pending_upload(request, edu, week, existing.id, file)
+                    _store_pending_upload(
+                        request, edu, week, existing.id, file, notify_subscribers,
+                    )
                     return render(request, 'upload_confirm.html', {
                         'existing': existing,
                         'edu_label': existing.get_edu_display(),
@@ -335,14 +366,23 @@ def processView(request):
         return redirect('upload')
 
     schedule_file = get_object_or_404(Schedule, id=file_id)
+    
     reader = ScheduleReader(schedule_file, Teacher, Lesson, Group, ScheduleError)
 
-    mismatch_redirect = _redirect_if_department_mismatch(request, reader, schedule_file)
+    try:
+        mismatch_redirect = _redirect_if_department_mismatch(request, reader, schedule_file)
+    except ValueError as error:
+        _abort_schedule_upload(request, schedule_file, str(error))
+        return redirect('upload')
     if mismatch_redirect:
         return mismatch_redirect
 
     if request.method == 'POST':
-        reader.validate_data(log_errors=False)
+        try:
+            reader.validate_data(log_errors=False)
+        except ValueError as error:
+            _abort_schedule_upload(request, schedule_file, str(error))
+            return redirect('upload')
         exceptions = list(ScheduleError.objects.all().order_by('id'))
         formset = LessonErrorFormSet(request.POST)
 
@@ -357,6 +397,7 @@ def processView(request):
 
             if not ScheduleError.objects.exists():
                 reader.upload_to_db()
+                _notify_schedule_uploaded(request, schedule_file)
                 ScheduleError.objects.all().delete()
                 messages.success(request, 'Расписание успешно загружено.')
                 response = _redirect_to_panel_after_upload(schedule_file)
@@ -370,6 +411,7 @@ def processView(request):
         exceptions = list(ScheduleError.objects.all().order_by('id'))
         if not exceptions:
             reader.upload_to_db()
+            _notify_schedule_uploaded(request, schedule_file)
             response = _redirect_to_panel_after_upload(schedule_file)
             complete_pending_upload(request)
             return response
@@ -384,10 +426,15 @@ def processView(request):
             'formset': formset,
         })
 
-    valid_count, error_count = reader.validate_data()
+    try:
+        valid_count, error_count = reader.validate_data()
+    except ValueError as error:
+        _abort_schedule_upload(request, schedule_file, str(error))
+        return redirect('upload')
 
     if error_count == 0:
         reader.upload_to_db()
+        _notify_schedule_uploaded(request, schedule_file)
         response = _redirect_to_panel_after_upload(schedule_file)
         complete_pending_upload(request)
         return response

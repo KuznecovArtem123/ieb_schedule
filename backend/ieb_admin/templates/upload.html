@@ -26,6 +26,14 @@
         {{ form.schedule.errors }}
     </div>
 
+    <div class="upload__form-group">
+        {{ form.notify_subscribers }}
+        <label for="{{ form.notify_subscribers.id_for_label }}">
+            {{ form.notify_subscribers.label }}
+        </label>
+        {{ form.notify_subscribers.errors }}
+    </div>
+
     <button type="submit" class="upload__submit button button--primary">Загрузить</button>
 </form>
 {% endblock content %}
