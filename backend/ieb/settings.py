@@ -137,7 +137,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 CORS_ALLOWED_ORIGINS = [
     "https://ineb-schedule.ru",
-    "http://localhost"
+    "http://localhost:8000",
+    "http://localhost",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
