@@ -280,6 +280,11 @@ class ScheduleUploadForm(forms.Form):
         label='Файл .xlsx с расписанием',
         widget=forms.ClearableFileInput(attrs={'class': 'upload__file', 'accept': '.xlsx'}),
     )
+    notify_subscribers = forms.BooleanField(
+        label='Отправить пользователям уведомление о новом расписании',
+        required=False,
+        initial=True,
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
