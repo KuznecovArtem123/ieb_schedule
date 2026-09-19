@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import {ArrowLeft} from '@gravity-ui/icons';
+import { ArrowLeft } from '@gravity-ui/icons';
 
 function Back() {
     const navigate = useNavigate();
@@ -11,7 +11,7 @@ function Back() {
             navigate('/', { replace: true });
         }
     };
-    
+
     return (
         <button className="grid h-[58px] w-[58px] shrink-0 place-items-center rounded-full border-0 bg-surface text-link shadow-float" title="Назад" onClick={handleBack}>
             <ArrowLeft></ArrowLeft>
