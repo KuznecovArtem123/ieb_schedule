@@ -5,6 +5,7 @@ import GroupButton from '@/entities/group/ui/GroupButton';
 import { isEduCategory } from '@/entities/group/model/types';
 import { useFetch } from '@/shared/lib/useFetch';
 import Status from '@/shared/ui/Status';
+import { BookmarkButton } from '@/features/bookmarks';
 
 const GroupsPage = () => {
     const { category: categoryParam } = useParams();
@@ -19,7 +20,13 @@ const GroupsPage = () => {
     return (
         <div className="mt-6 flex flex-col gap-3">
             {groups.map((elem) => (
-                <GroupButton key={elem.id} id={elem.id} profession={elem.profession} code={elem.code} />
+                <GroupButton
+                    key={elem.id}
+                    id={elem.id}
+                    profession={elem.profession}
+                    code={elem.code}
+                    action={<BookmarkButton kind="groups" id={elem.id} />}
+                />
             ))}
         </div>
     );

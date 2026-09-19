@@ -2,6 +2,7 @@ import TeacherButton from '@/entities/teacher/ui/TeacherButton';
 import { teacherService } from '@/entities/teacher/api/teacherService';
 import { useFetch } from '@/shared/lib/useFetch';
 import Status from '@/shared/ui/Status';
+import { BookmarkButton } from '@/features/bookmarks';
 
 const TeachersPage = () => {
     const { data: teachers, loading, error } = useFetch(() => teacherService.get(), []);
@@ -13,7 +14,12 @@ const TeachersPage = () => {
     return (
         <div className="mt-6 flex flex-col gap-3">
             {teachers.map((elem) => (
-                <TeacherButton key={elem.id} id={elem.id} name={elem.search_name} />
+                <TeacherButton
+                    key={elem.id}
+                    id={elem.id}
+                    name={elem.search_name}
+                    action={<BookmarkButton kind="teachers" id={elem.id} />}
+                />
             ))}
         </div>
     );

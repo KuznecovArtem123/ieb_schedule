@@ -7,12 +7,31 @@ import {
 } from '@/shared/lib/network';
 
 const VERSION_URL = '/schedule/version/';
+const VERSION_STORAGE_KEY = 'schedule-version';
 
 const MIN_REFRESH_MS = 30_000;
 
 const listeners = new Set<() => void>();
 
-let version: string | undefined;
+function readStoredVersion(): string | undefined {
+    try {
+        const stored = localStorage.getItem(VERSION_STORAGE_KEY);
+        return typeof stored === 'string' && stored.length > 0 ? stored : undefined;
+    } catch (error) {
+        console.error(error);
+        return undefined;
+    }
+}
+
+function storeVersion(value: string) {
+    try {
+        localStorage.setItem(VERSION_STORAGE_KEY, value);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+let version: string | undefined = readStoredVersion();
 let lastCheckedAt = 0;
 let inFlight: Promise<void> | null = null;
 
@@ -54,6 +73,7 @@ export function refreshScheduleVersion(force = false): Promise<void> {
             const parsed = parseVersion(data);
             if (parsed !== null && parsed !== version) {
                 version = parsed;
+                storeVersion(parsed);
                 notify();
             }
         })

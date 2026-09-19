@@ -54,8 +54,12 @@ class TeacherLessonsView(APIView):
 
 class GroupView(APIView):
     def get(self, request):
-        edu = request.GET.get('edu').upper() or Group.Department.SPO
-        groups = Group.objects.all().filter(department=edu)
+        edu_param = request.GET.get('edu')
+        if edu_param:
+            departments = [d.strip().upper() for d in edu_param.split(',')]
+        else:
+            departments = [Group.Department.VO, Group.Department.SPO]
+        groups = Group.objects.filter(department__in=departments)
         serializer = GroupSerializer(groups, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
     

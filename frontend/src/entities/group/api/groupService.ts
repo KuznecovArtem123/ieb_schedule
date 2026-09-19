@@ -11,6 +11,11 @@ export const groupService = {
       return response.data;
     }, getScheduleVersion()),
 
+  getAll: (): Promise<Group[]> => withCache(`groups`, async () => {
+    const response = await axiosClient.get<Group[]>(`/groups`);
+    return response.data;
+  }, getScheduleVersion()),
+
   getLessons: (id: number, week: Week = "this"): Promise<Lesson[]> =>
     withCache(`group:${id}:${week}`, async () => {
       const response = await axiosClient.get<Lesson[]>(`/lessons/fromGroup/${id}?week=${week}`);
