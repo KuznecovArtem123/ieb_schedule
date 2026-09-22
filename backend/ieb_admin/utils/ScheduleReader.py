@@ -120,8 +120,20 @@ class ScheduleReader:
         return pairs
 
     def process_teacher_lastname(self, teacher_str: str):
-        if not teacher_str: return []
-        return re.findall(r'[А-Я][а-я]+', teacher_str)
+        if not teacher_str:
+            return []
+
+        teacher_pattern = re.compile(
+            r'(?P<last_name>[А-ЯЁ][а-яё-]+)\s+'
+            r'(?P<first_initial>[А-ЯЁ])\s*\.\s*'
+            r'(?P<patronymic_initial>[А-ЯЁ])\s*\.'
+        )
+
+        return [
+            f"{match.group('last_name')} "
+            f"{match.group('first_initial')}.{match.group('patronymic_initial')}."
+            for match in teacher_pattern.finditer(str(teacher_str))
+        ]
 
     def get_subjects_and_teachers(self, firstCell, secondCell):
         STOP_WORDS = [
@@ -262,7 +274,7 @@ class ScheduleReader:
             errs = self._check_base_errors(item)
             found_teachers = []
             for t_name in item.get('teachers', []):
-                t_obj = self.Teacher.objects.filter(search_name__icontains=t_name).first()
+                t_obj = self.Teacher.objects.filter(search_name__iexact=t_name).first()
                 if t_obj:
                     found_teachers.append(t_obj)
                 else:

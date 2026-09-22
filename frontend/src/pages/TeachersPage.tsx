@@ -12,7 +12,7 @@ const TeachersPage = () => {
     if (!teachers?.length) return <Status>Преподаватели не найдены</Status>;
 
     return (
-        <div className="mt-6 flex flex-col gap-3">
+        <div className="mt-6 grid gap-3 md:grid-cols-2 md:gap-4">
             {teachers.map((elem) => (
                 <TeacherButton
                     key={elem.id}

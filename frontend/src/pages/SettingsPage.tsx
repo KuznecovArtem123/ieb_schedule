@@ -3,6 +3,7 @@ import { InstallCard } from '@/features/install-app';
 import { useTheme } from '@/shared/lib/theme';
 import { NotificationRow } from '@/features/notifications';
 import { Switch } from '@heroui/react';
+import {Sun, Moon, Bell} from '@gravity-ui/icons';
 
 function SettingsPage() {
     const { isDark, setPreference } = useTheme();
@@ -16,7 +17,10 @@ function SettingsPage() {
             <div className="overflow-hidden rounded-[27px] bg-surface p-5 shadow-card">
                 <div className="flex items-center justify-between gap-4">
                     <div>
-                        <p className="text-base font-extrabold text-heading">Тёмная тема</p>
+                        <p className="flex items-center gap-2 text-base font-extrabold text-heading">
+                            {isDark ? <Moon width="18" height="18" /> : <Sun width="18" height="18" />}
+                            Тёмная тема
+                        </p>
                         <p className="mt-1 text-sm leading-5 text-subtle">Светлая тема / Тёмная тема</p>
                     </div>
                     <Switch

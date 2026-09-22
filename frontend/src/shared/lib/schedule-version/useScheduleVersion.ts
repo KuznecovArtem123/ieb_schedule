@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react';
 import { getScheduleVersion, subscribe } from './store';
 
-export function useScheduleVersion(): string | undefined {
-    return useSyncExternalStore(subscribe, getScheduleVersion);
+export function useScheduleVersion(edu = 'spo', week = 'this'): string | undefined {
+    return useSyncExternalStore(subscribe, () => getScheduleVersion(edu, week));
 }
