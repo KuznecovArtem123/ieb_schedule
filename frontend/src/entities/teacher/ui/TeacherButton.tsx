@@ -18,7 +18,7 @@ function TeacherButton({ id, name, action }: TeacherButtonProps) {
             </BasicButton>
 
             {action && (
-                <div className="absolute right-4 flex items-center justify-center min-w-[16px] z-10">
+                <div className="absolute right-2 flex items-center justify-center min-w-[16px] z-10">
                     {action}
                 </div>
             )}

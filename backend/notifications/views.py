@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
 
 from .models import PushSubscription
 from .serializers import PushSubscriptionSerializer
@@ -14,8 +15,9 @@ class VapidPublicKeyView(APIView):
         return Response({'publicKey': settings.WEBPUSH_VAPID_PUBLIC_KEY})
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class PushSubscriptionView(APIView):
+    authentication_classes = []
+    permission_classes = [AllowAny]
     def post(self, request):
         serializer = PushSubscriptionSerializer(
             data=request.data,

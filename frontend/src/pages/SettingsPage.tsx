@@ -1,6 +1,7 @@
 
 import { InstallCard } from '@/features/install-app';
 import { useTheme } from '@/shared/lib/theme';
+import { NotificationRow } from '@/features/notifications';
 import { Switch } from '@heroui/react';
 
 function SettingsPage() {
@@ -33,21 +34,7 @@ function SettingsPage() {
                 </div>
             </div>
 
-            <div className="overflow-hidden rounded-[27px] bg-surface p-5 shadow-card">
-                <div className="flex items-center justify-between gap-4">
-                    <div>
-                        <p className="text-base font-extrabold text-heading">Уведомления</p>
-                        <p className="mt-1 text-sm leading-5 text-subtle">Включить или выключить уведомления</p>
-                    </div>
-                    <Switch aria-label="Включить уведомления" size="lg">
-                        <Switch.Content>
-                            <Switch.Control>
-                                <Switch.Thumb />
-                            </Switch.Control>
-                        </Switch.Content>
-                    </Switch>
-                </div>
-            </div>
+            <NotificationRow />
         </section>
     )
 }

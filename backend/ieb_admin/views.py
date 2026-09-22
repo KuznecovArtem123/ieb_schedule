@@ -37,7 +37,7 @@ from .utils.ScheduleReader import ScheduleReader
 logger = logging.getLogger(__name__)
 
 SCHEDULE_NOTIFICATION_TITLE = 'Расписание обновлено'
-SCHEDULE_NOTIFICATION_BODY = 'Загружено новое расписание: {edu} — {week}.'
+SCHEDULE_NOTIFICATION_BODY = 'Загружено новое расписание: {edu} — {week} неделя.'
 
 
 # auth
@@ -219,7 +219,7 @@ def _notify_schedule_uploaded(request, schedule_file):
             title=SCHEDULE_NOTIFICATION_TITLE,
             body=SCHEDULE_NOTIFICATION_BODY.format(
                 edu=schedule_file.get_edu_display(),
-                week=schedule_file.get_week_display(),
+                week=schedule_file.get_week_display().lower(),
             ),
             url='/',
         )

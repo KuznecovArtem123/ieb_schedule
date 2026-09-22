@@ -21,6 +21,10 @@ export function subscribe(listener: () => void) {
     return () => { listeners.delete(listener); };
 }
 
+export function getIsInstalled(): boolean {
+    return installed;
+}
+
 export function getInstallMode(): InstallMode {
     if (installed) return 'unavailable';
     if (deferred) return 'prompt';

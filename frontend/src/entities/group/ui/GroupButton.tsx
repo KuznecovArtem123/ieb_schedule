@@ -19,7 +19,7 @@ function GroupButton({ id, profession, code, action }: GroupButtonProps) {
             </BasicButton>
 
             {action && (
-                <div className="absolute right-4 flex items-center justify-center z-10">
+                <div className="absolute right-2 flex items-center justify-center z-10">
                     {action}
                 </div>
             )}
