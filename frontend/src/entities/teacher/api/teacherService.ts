@@ -9,5 +9,6 @@ export const teacherService = {
 
   getLessons: (id: number, week: Week = "this"): Promise<Lesson[]> =>
     withCache(`teacher:${id}:${week}`, (etag) =>
-      getWithEtag<Lesson[]>(`/lessons/fromTeacher/${id}?week=${week}`, etag)),
+      getWithEtag<Lesson[]>(`/lessons/fromTeacher/${id}?week=${week}`, etag, true),
+      { notFoundValue: [] }),
 };

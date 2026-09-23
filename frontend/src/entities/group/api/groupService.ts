@@ -12,5 +12,6 @@ export const groupService = {
 
   getLessons: (id: number, week: Week = "this"): Promise<Lesson[]> =>
     withCache(`group:${id}:${week}`, (etag) =>
-      getWithEtag<Lesson[]>(`/lessons/fromGroup/${id}?week=${week}`, etag)),
+      getWithEtag<Lesson[]>(`/lessons/fromGroup/${id}?week=${week}`, etag, true),
+      { notFoundValue: [] }),
 };
