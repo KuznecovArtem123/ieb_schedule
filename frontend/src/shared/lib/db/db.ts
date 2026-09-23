@@ -7,7 +7,7 @@ export interface CacheRecord {
     key: string;
     payload: unknown;
     savedAt: number;
-    version?: string;
+    etag?: string;
 }
 
 export interface ScheduleDB extends DBSchema {

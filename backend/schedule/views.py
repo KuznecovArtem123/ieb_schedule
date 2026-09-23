@@ -28,6 +28,7 @@ def response_with_schedule_etag(request, schedules, data_factory):
         response = Response(data=data_factory(), status=status.HTTP_200_OK)
 
     response['ETag'] = etag
+    response['Access-Control-Expose-Headers'] = 'ETag'
     return response
 
 

@@ -1,24 +1,16 @@
-import axiosClient from "@/shared/api/client";
-import { withCache } from "@/shared/api/withCache";
+import { getWithEtag, withCache } from "@/shared/api/withCache";
 import type { Lesson, Week } from "@/entities/lesson/model/types";
 import type { EduCategory, Group } from "../model/types";
-import { getScheduleVersion } from "@/shared/lib/schedule-version";
 
 export const groupService = {
   get: (category: EduCategory = "spo"): Promise<Group[]> =>
-    withCache(`groups:${category}`, async () => {
-      const response = await axiosClient.get<Group[]>(`/groups?edu=${category}`);
-      return response.data;
-    }, getScheduleVersion()),
+    withCache(`groups:${category}`, (etag) =>
+      getWithEtag<Group[]>(`/groups?edu=${category}`, etag)),
 
-  getAll: (): Promise<Group[]> => withCache(`groups`, async () => {
-    const response = await axiosClient.get<Group[]>(`/groups`);
-    return response.data;
-  }, getScheduleVersion()),
+  getAll: (): Promise<Group[]> => withCache(`groups`, (etag) =>
+    getWithEtag<Group[]>(`/groups`, etag)),
 
   getLessons: (id: number, week: Week = "this"): Promise<Lesson[]> =>
-    withCache(`group:${id}:${week}`, async () => {
-      const response = await axiosClient.get<Lesson[]>(`/lessons/fromGroup/${id}?week=${week}`);
-      return response.data;
-    }, getScheduleVersion()),
+    withCache(`group:${id}:${week}`, (etag) =>
+      getWithEtag<Lesson[]>(`/lessons/fromGroup/${id}?week=${week}`, etag)),
 };

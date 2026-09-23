@@ -1,1 +1,1 @@
-export { readCache, writeCache, evictStale, DAY_MS, type CachedValue } from './cache';
+export { readCache, writeCache, evictStale, DAY_MS } from './cache';

@@ -141,6 +141,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost",
 ]
 
+CORS_EXPOSE_HEADERS = ['ETag']
+
 CSRF_TRUSTED_ORIGINS = [
     "https://ineb-schedule.ru",
     "http://localhost"

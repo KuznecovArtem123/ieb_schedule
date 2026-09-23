@@ -7,7 +7,7 @@ const MAX_AGE_MS = 30 * DAY_MS;
 export interface CachedValue<T> {
     data: T;
     savedAt: number;
-    version?: string;
+    etag?: string;
 }
 
 export async function readCache<T>(key: string): Promise<CachedValue<T> | null> {
@@ -17,19 +17,19 @@ export async function readCache<T>(key: string): Promise<CachedValue<T> | null> 
     try {
         const record = await db.get('cache', key);
         if (!record) return null;
-        return { data: record.payload as T, savedAt: record.savedAt, version: record.version };
+        return { data: record.payload as T, savedAt: record.savedAt, etag: record.etag };
     } catch (error) {
         console.error('Не удалось прочитать кеш', error);
         return null;
     }
 }
 
-export async function writeCache(key: string, payload: unknown, version?: string): Promise<void> {
+export async function writeCache(key: string, payload: unknown, etag?: string): Promise<void> {
     const db = await getDB();
     if (!db) return;
 
     try {
-        await db.put('cache', { key, payload, version: version, savedAt: Date.now() });
+        await db.put('cache', { key, payload, savedAt: Date.now(), etag });
     } catch (error) {
         console.error('Не удалось записать кеш', error);
     }

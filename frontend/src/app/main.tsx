@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import './styles/index.css';
 import '@/shared/lib/pwa';
-import '@/shared/lib/schedule-version';
 import App from './App';
 import { DAY_MS, evictStale } from '@/shared/lib/db';
 
