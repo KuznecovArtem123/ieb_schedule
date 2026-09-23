@@ -5,19 +5,29 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host --mode development --port 8000",
-    "build": "vite build",
+    "build": "tsc --noEmit && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@heroui/react": "^3.2.4",
+    "@heroui/styles": "^3.2.4",
+    "@tailwindcss/vite": "^4.3.3",
     "axios": "^1.16.1",
     "dotenv": "^17.4.2",
+    "idb": "^8.0.3",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
-    "react-router-dom": "^7.14.2"
+    "react-router-dom": "^7.14.2",
+    "tailwindcss": "^4.3.3",
+    "workbox-core": "^7.4.1",
+    "workbox-precaching": "^7.4.1",
+    "workbox-routing": "^7.4.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@gravity-ui/icons": "^2.22.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
@@ -25,6 +35,8 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.5.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.70.0",
     "vite": "^8.0.10",
     "vite-plugin-pwa": "^1.3.0"
   }

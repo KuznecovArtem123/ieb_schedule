@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    'notifications',
     'schedule',
     'ieb_admin',
 ]
@@ -136,10 +137,19 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 CORS_ALLOWED_ORIGINS = [
     "https://ineb-schedule.ru",
-    "http://localhost"
+    "http://localhost:8000",
+    "http://localhost",
 ]
+
+CORS_EXPOSE_HEADERS = ['ETag']
 
 CSRF_TRUSTED_ORIGINS = [
     "https://ineb-schedule.ru",
     "http://localhost"
 ]
+
+WEBPUSH_VAPID_PUBLIC_KEY = os.getenv('WEBPUSH_VAPID_PUBLIC_KEY', '')
+WEBPUSH_VAPID_PRIVATE_KEY = os.getenv('WEBPUSH_VAPID_PRIVATE_KEY', '')
+WEBPUSH_VAPID_CLAIMS = {
+    'sub': os.getenv('WEBPUSH_VAPID_SUBJECT', 'mailto:admin@ineb-schedule.ru'),
+}

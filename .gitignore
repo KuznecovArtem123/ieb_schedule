@@ -4,6 +4,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+*.pem
+
 # C extensions
 *.so
 
@@ -166,3 +168,6 @@ yarn-error.log*
 /.changelog
 .npm/
 dist
+# Шаблон Python выше содержит неякорные правила (lib/, build/, var/),
+# которые случайно совпадают с исходниками фронтенда, например src/shared/lib.
+!frontend/src/**
