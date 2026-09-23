@@ -36,25 +36,69 @@ function Lessons({ lessons, weekValue }: LessonsProps) {
 
 
             return (
-                <section key={day} className="mb-[25px] overflow-hidden rounded-[27px] bg-surface shadow-card">
-                    <div className={`flex min-h-[68px] items-center justify-between px-[19px] text-white ${theme.header}`}>
+                <section key={day} className={`mb-[25px] overflow-hidden rounded-[27px] bg-surface shadow-card md:rounded-[27px] md:border-2 md:bg-surface md:shadow-card ${theme.border}`}>
+                    <div className={`flex min-h-[68px] items-center justify-between px-[19px] text-white md:hidden ${theme.header}`}>
                         <div className="flex items-center gap-3.5 text-[1.15rem] font-extrabold tracking-[0.4px]"><Books width='22' height='22' />{day}</div>
                         <div className="shrink-0 text-base font-bold">{dateDay}.{dateMonth}</div>
                     </div>
-                    <div className={`space-y-3 border-2 border-t-0 ${theme.border} rounded-b-[27px] flex flex-col items-between `}>
-                        {dayLessons.map(elem => (
-                            <LessonCard
-                                key={elem.id || elem.order}
-                                num={elem.order}
-                                teachers={elem.teachers}
-                                classroom={elem.auditorium}
-                                subject={elem.subject}
-                                startTime={elem.start_time.slice(0, 5)}
-                                endTime={elem.end_time.slice(0, 5)}
-                                studentsGroup={elem.group_code}
-                                theme={theme}
-                            />
-                        ))}
+                    <div className={`space-y-3 border-2 border-t-0 ${theme.border} rounded-b-[27px] flex flex-col items-between md:space-y-0 md:rounded-none md:border-0`}>
+                        <div className="md:hidden [&>article:last-child_.stick]:hidden">
+                            {dayLessons.map(elem => (
+                                <LessonCard
+                                    key={elem.id || elem.order}
+                                    num={elem.order}
+                                    teachers={elem.teachers}
+                                    classroom={elem.auditorium}
+                                    subject={elem.subject}
+                                    startTime={elem.start_time.slice(0, 5)}
+                                    endTime={elem.end_time.slice(0, 5)}
+                                    studentsGroup={elem.group_code}
+                                    theme={theme}
+                                />
+                            ))}
+                        </div>
+                        <div className="hidden overflow-hidden md:block">
+                            <table className="w-full table-fixed border-collapse text-left">
+                                <colgroup>
+                                    <col style={{ width: '7%' }} />
+                                    <col style={{ width: '14%' }} />
+                                    <col style={{ width: '37%' }} />
+                                    <col style={{ width: '30%' }} />
+                                    <col style={{ width: '12%' }} />
+                                </colgroup>
+                                <thead className="text-sm uppercase tracking-[0.08em] text-white">
+                                    <tr className={`${theme.header}`}>
+                                        <th colSpan={5} className="px-4 py-4 text-left text-base normal-case tracking-normal">
+                                            <span className="inline-flex items-center gap-3 font-extrabold"><Books width="20" height="20" />{day}</span>
+                                            <span className="float-right font-bold">{dateDay}.{dateMonth}</span>
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th className="w-[7%] bg-surface-soft px-4 py-3 font-extrabold text-heading">Пара</th>
+                                        <th className="w-[14%] bg-surface-soft px-4 py-3 font-extrabold text-heading">Время</th>
+                                        <th className="w-[37%] bg-surface-soft px-4 py-3 font-extrabold text-heading">Дисциплина</th>
+                                        <th className="w-[30%] bg-surface-soft px-4 py-3 font-extrabold text-heading">Преподаватель</th>
+                                        <th className="w-[12%] bg-surface-soft px-4 py-3 font-extrabold text-heading">Аудитория</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {dayLessons.map(elem => (
+                                        <tr key={elem.id || elem.order} className="border-b-2 border-line last:border-b-0">
+                                            <td className="px-4 py-5 align-top font-extrabold text-link">{elem.order}</td>
+                                            <td className="whitespace-nowrap px-4 py-5 align-top font-semibold text-meta">
+                                                {elem.start_time.slice(0, 5)} – {elem.end_time.slice(0, 5)}
+                                            </td>
+                                            <td className="break-words px-4 py-5 align-top">
+                                                <div className="font-extrabold">{elem.subject}</div>
+                                                <div className="mt-1 text-sm text-meta">{elem.group_code}</div>
+                                            </td>
+                                            <td className="break-words px-4 py-5 align-top text-meta">{elem.teachers.join(', ')}</td>
+                                            <td className="break-words px-4 py-5 align-top font-bold text-meta">{elem.auditorium ?? '—'}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </section>
             );
@@ -74,7 +118,9 @@ function Lessons({ lessons, weekValue }: LessonsProps) {
                 <button onClick={() => handleWeekChange('this')} className={`flex min-h-[58px] items-center justify-center gap-1.5 rounded-[17px] text-[0.92rem] font-bold transition ${weekValue === 'this' ? 'bg-primary text-white shadow-week' : 'bg-inactive text-white'}`}>Эта неделя</button>
                 <button onClick={() => handleWeekChange('next')} className={`flex min-h-[58px] items-center justify-center gap-1.5 rounded-[17px] text-[0.92rem] font-bold transition ${weekValue === 'next' ? 'bg-primary text-white shadow-week' : 'bg-inactive text-white'}`}>Следующая неделя</button>
             </div>
-            {content}
+            <div className="md:grid md:grid-cols-1 md:items-start md:gap-6">
+                {content}
+            </div>
         </div>
     );
 }

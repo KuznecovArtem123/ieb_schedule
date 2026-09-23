@@ -18,6 +18,7 @@
     --color-chip-primary: #e9f3fd;
     --color-chip-accent: #FFF3E9;
     --color-inactive: #B5B7C1;
+    --color-line: #d2deec;
 
     /* text */
     --color-body: #1d304b;
@@ -66,6 +67,7 @@
     --color-chip-primary: #1c3350;
     --color-chip-accent: #3a2a18;
     --color-inactive: #3f4a5c;
+    --color-line: #d8e4f3;
 
     --color-body: #d7e2f2;
     --color-heading: #ccdcf5;

@@ -37,8 +37,8 @@ function BookmarkList() {
     if (groups.length === 0 && teachers.length === 0) return null;
 
     return (
-        <div className="flex flex-col overflow-hidden rounded-[40px] bg-surface p-5 shadow-card gap-3">
-            <p className="text-lg font-extrabold text-heading text-center">Избранное</p>
+        <div className="flex flex-col overflow-hidden rounded-[40px] bg-surface p-5 shadow-card gap-0 [&>*:last-child]:mb-0">
+            <p className="mb-3 text-center text-lg font-extrabold text-heading">Избранное</p>
 
             {groups.map((group) => (
                 <GroupButton

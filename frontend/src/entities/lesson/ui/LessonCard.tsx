@@ -37,8 +37,8 @@ function LessonCard({
                 <span className="flex-1 basis-[145px]">● {teachers.join(', ')}</span>
                 <span className={`text-base ${theme.chip.split(' ')[1]}`}>{classroom ?? '—'}</span>
             </div>
+            <div className={`stick h-[1px] w-[300px] ${theme.header}  self-center mt-5`}></div>
         </article>
-        <div className={`h-[1px] w-[300px] ${theme.header} last:hidden self-center`}></div>
         </>
     );
 }

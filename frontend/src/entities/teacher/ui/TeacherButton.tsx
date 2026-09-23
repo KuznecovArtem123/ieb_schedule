@@ -9,10 +9,10 @@ interface TeacherButtonProps {
 
 function TeacherButton({ id, name, action }: TeacherButtonProps) {
     return (
-        <div className="relative w-full flex items-center justify-center">
+        <div className="relative mb-3 w-full break-inside-avoid flex items-center justify-center md:mb-4">
             <BasicButton
                 to={`/teacher/${id}/?week=this`}
-                className={`w-full text-center ${action ? 'pr-10' : ''}`}
+                className={`w-full text-center md:flex md:min-h-[60px] md:items-center md:justify-center ${action ? 'pr-10' : ''}`}
             >
                 {name}
             </BasicButton>
