@@ -1,0 +1,49 @@
+import {Clock} from '@gravity-ui/icons';
+
+interface LessonCardProps {
+  num: number;
+  teachers: string[];
+  classroom: string | null;
+  subject: string;
+  startTime: string;
+  endTime: string;
+    studentsGroup?: string;
+    isTeacherSchedule: boolean;
+  theme: {
+    chip: string;
+    header: string;
+  };
+};
+
+function LessonCard({
+    num,
+    teachers,
+    classroom,
+    subject,
+    startTime,
+    endTime,
+    studentsGroup,
+    isTeacherSchedule,
+    theme
+}: LessonCardProps) {
+    return (
+        <>
+        <article className={` rounded-[27px] bg-surface px-[22px] py-5 m-0`}>
+            <div className="flex flex-wrap items-center justify-between gap-2.5">
+                <div className={`rounded-[13px] px-[13px] py-2 text-[0.95rem] font-extrabold ${theme.chip}`}>{num} пара</div>
+                <div className={`flex items-center rounded-[13px] px-[13px] py-2 text-[0.95rem] font-semibold ${theme.chip}`}><span className="mr-2"><Clock/></span>{startTime} – {endTime}</div>
+            </div>
+            <div className="mx-[5px] mt-6 mb-[18px]">
+                <div className="text-[1.28rem] font-extrabold leading-tight">{subject}</div>
+            </div>
+            <div className="flex flex-wrap items-start justify-between gap-3 rounded-xl bg-surface-soft px-3 py-2.5 text-[0.9rem] font-bold text-meta">
+                <span className="flex-1 basis-[145px]">● {isTeacherSchedule ? studentsGroup : teachers.join(', ')}</span>
+                <span className={`text-base ${theme.chip.split(' ')[1]}`}>{classroom ?? '—'}</span>
+            </div>
+            <div className={`stick h-[1px] w-[300px] ${theme.header}  self-center mt-5`}></div>
+        </article>
+        </>
+    );
+}
+
+export default LessonCard;

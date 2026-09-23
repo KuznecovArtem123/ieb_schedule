@@ -1,4 +1,9 @@
 from django.db import models
+from django.db.models.signals import m2m_changed, post_delete, post_save
+from django.dispatch import receiver
+from django.utils import timezone
+
+from ieb_admin.models import Schedule
 
 WEEKDAY_NAMES_RU = [
     'Понедельник',
@@ -72,3 +77,20 @@ class Lesson(models.Model):
 
     def __str__(self):
         return f"{self.subject} - {self.group.code}"
+
+
+def touch_schedule_version(schedule_id):
+    if schedule_id:
+        Schedule.objects.filter(pk=schedule_id).update(updated_at=timezone.now())
+
+
+@receiver(post_save, sender=Lesson)
+@receiver(post_delete, sender=Lesson)
+def update_schedule_version_on_lesson_change(sender, instance, **kwargs):
+    touch_schedule_version(instance.schedule_id)
+
+
+@receiver(m2m_changed, sender=Lesson.teachers.through)
+def update_schedule_version_on_teacher_change(sender, instance, action, **kwargs):
+    if action in {'post_add', 'post_remove', 'post_clear'}:
+        touch_schedule_version(instance.schedule_id)

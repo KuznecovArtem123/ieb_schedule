@@ -1,11 +1,23 @@
+import { fileURLToPath, URL } from "node:url";
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
+    },
+  },
   plugins: [
     react(),
+    tailwindcss(),
     VitePWA({
+      strategies: "injectManifest",
+      srcDir: "src/app",
+      filename: "sw.ts",
       registerType: "autoUpdate",
       includeAssets: ["favicon.ico", "apple-touch-icon.png", "robots.txt"],
       manifest: {
@@ -18,14 +30,8 @@ export default defineConfig({
           { src: "/icon-512.png", sizes: "512x512", type: "image/png" },
         ],
       },
-      workbox: {
+      injectManifest: {
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
-        navigateFallbackDenylist: [
-          /^\/admin(?:\/|$)/,
-          /^\/api(?:\/|$)/,
-          /^\/static(?:\/|$)/,
-          /^\/media(?:\/|$)/,
-        ],
       },
     }),
   ],

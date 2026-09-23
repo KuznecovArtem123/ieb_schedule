@@ -18,7 +18,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if options['force']:
-            results = rollover_schedules(only_before_today=False)
+            results = rollover_schedules()
         else:
             results = maybe_rollover_schedules()
 

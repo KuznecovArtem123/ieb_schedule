@@ -18,6 +18,7 @@ class Schedule(models.Model):
     edu = models.CharField(choices=Edu,default=Edu.SPO, max_length=3)
     file = models.FileField(upload_to='schedules')
     uploaded_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         constraints = [
