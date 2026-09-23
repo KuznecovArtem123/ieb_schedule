@@ -1,4 +1,6 @@
 import axiosClient from '@/shared/api/client';
+import { isAxiosError } from 'axios';
+import { evictCacheByPrefix } from '@/shared/lib/db/cache';
 import {
     getIsOnline,
     isNetworkError,
@@ -13,27 +15,43 @@ const MIN_REFRESH_MS = 30_000;
 
 const listeners = new Set<() => void>();
 
-function readStoredVersion(): string | undefined {
+type ScheduleVersionScope = {
+    edu: string;
+    week: string;
+};
+
+type StoredVersions = Record<string, string>;
+
+function getScopeKey({ edu, week }: ScheduleVersionScope): string {
+    return `${edu}:${week}`;
+}
+
+function readStoredVersions(): StoredVersions {
     try {
         const stored = localStorage.getItem(VERSION_STORAGE_KEY);
-        return typeof stored === 'string' && stored.length > 0 ? stored : undefined;
+        if (!stored) return {};
+        const parsed: unknown = JSON.parse(stored);
+        return parsed !== null && typeof parsed === 'object' ? parsed as StoredVersions : {};
     } catch (error) {
         console.error(error);
-        return undefined;
+        return {};
     }
 }
 
-function storeVersion(value: string) {
+function storeVersions(value: StoredVersions) {
     try {
-        localStorage.setItem(VERSION_STORAGE_KEY, value);
+        localStorage.setItem(VERSION_STORAGE_KEY, JSON.stringify(value));
     } catch (error) {
         console.error(error);
     }
 }
 
-let version: string | undefined = readStoredVersion();
-let lastCheckedAt = 0;
-let inFlight: Promise<void> | null = null;
+let versions = readStoredVersions();
+const lastCheckedAt = new Map<string, number>();
+const inFlight = new Map<string, Promise<VersionRefreshResult>>();
+let activeScope: ScheduleVersionScope = { edu: 'spo', week: 'this' };
+
+export type VersionRefreshResult = 'available' | 'missing' | 'unavailable';
 
 function notify() {
     listeners.forEach((listener) => listener());
@@ -44,8 +62,19 @@ export function subscribe(listener: () => void) {
     return () => { listeners.delete(listener); };
 }
 
-export function getScheduleVersion(): string | undefined {
-    return version;
+export function getScheduleVersion(edu = 'spo', week = 'this'): string | undefined {
+    return versions[getScopeKey({ edu, week })];
+}
+
+export function clearScheduleVersion(edu = 'spo', week = 'this'): void {
+    const scopeKey = getScopeKey({ edu, week });
+    if (versions[scopeKey] === undefined) return;
+
+    const nextVersions = { ...versions };
+    delete nextVersions[scopeKey];
+    versions = nextVersions;
+    storeVersions(versions);
+    notify();
 }
 
 interface ScheduleVersion {
@@ -59,39 +88,62 @@ function parseVersion(data: ScheduleVersion): string | null {
     return `${idPart}${value}`;
 }
 
-export function refreshScheduleVersion(force = false): Promise<void> {
-    if (inFlight) return inFlight;
-    if (!getIsOnline()) return Promise.resolve();
-    if (!force && Date.now() - lastCheckedAt < MIN_REFRESH_MS) return Promise.resolve();
+export function refreshScheduleVersion(
+    edu = 'spo',
+    week = 'this',
+    force = false,
+): Promise<VersionRefreshResult> {
+    const scope = { edu, week };
+    activeScope = scope;
+    const scopeKey = getScopeKey(scope);
+    const currentRequest = inFlight.get(scopeKey);
+    if (currentRequest) return currentRequest;
+    if (!getIsOnline()) return Promise.resolve('unavailable');
+    if (!force && Date.now() - (lastCheckedAt.get(scopeKey) ?? 0) < MIN_REFRESH_MS) {
+        return Promise.resolve('available');
+    }
 
-    inFlight = axiosClient
-        .get<ScheduleVersion>(VERSION_URL)
+    const request = axiosClient
+        .get<ScheduleVersion>(VERSION_URL, { params: scope })
         .then(({ data }) => {
             reportNetworkSuccess();
-            lastCheckedAt = Date.now();
+            lastCheckedAt.set(scopeKey, Date.now());
 
             const parsed = parseVersion(data);
-            if (parsed !== null && parsed !== version) {
-                version = parsed;
-                storeVersion(parsed);
+            if (parsed !== null && parsed !== versions[scopeKey]) {
+                versions = { ...versions, [scopeKey]: parsed };
+                storeVersions(versions);
                 notify();
             }
+            return 'available' as const;
         })
         .catch((error: unknown) => {
+            if (isAxiosError(error) && error.response?.status === 404) {
+                clearScheduleVersion(edu, week);
+                void evictCacheByPrefix(`group:${edu}:`);
+                void evictCacheByPrefix(`teacher:${edu}:`);
+                return 'missing' as const;
+            }
             if (isNetworkError(error)) reportNetworkError();
             console.warn('Не удалось получить версию расписания', error);
+            return 'unavailable' as const;
         })
         .finally(() => {
-            inFlight = null;
+            inFlight.delete(scopeKey);
         });
 
-    return inFlight;
+    inFlight.set(scopeKey, request);
+    return request;
 }
 
-void refreshScheduleVersion(true);
+void refreshScheduleVersion('spo', 'this', true);
 
 document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') void refreshScheduleVersion();
+    if (document.visibilityState === 'visible') {
+        void refreshScheduleVersion(activeScope.edu, activeScope.week);
+    }
 });
 
-window.addEventListener('online', () => void refreshScheduleVersion(true));
+window.addEventListener('online', () => {
+    void refreshScheduleVersion(activeScope.edu, activeScope.week, true);
+});
