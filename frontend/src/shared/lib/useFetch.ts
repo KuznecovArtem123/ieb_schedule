@@ -8,8 +8,8 @@ interface FetchState<T> {
 
 const INITIAL = { data: null, loading: true, error: null } as const;
 
-export function useFetch<T>(fetcher: () => Promise<T>, deps: unknown[], enabled = true): FetchState<T> {
-    const key = JSON.stringify([enabled, ...deps]);
+export function useFetch<T>(fetcher: () => Promise<T>, deps: unknown[]): FetchState<T> {
+    const key = JSON.stringify(deps);
     const [state, setState] = useState<FetchState<T>>(INITIAL);
     const [loadedKey, setLoadedKey] = useState(key);
 
@@ -19,8 +19,6 @@ export function useFetch<T>(fetcher: () => Promise<T>, deps: unknown[], enabled 
     }
 
     useEffect(() => {
-        if (!enabled) return;
-
         let cancelled = false;
 
         fetcher()
@@ -37,7 +35,7 @@ export function useFetch<T>(fetcher: () => Promise<T>, deps: unknown[], enabled 
             cancelled = true;
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [key, enabled]);
+    }, [key]);
 
     return state;
 }

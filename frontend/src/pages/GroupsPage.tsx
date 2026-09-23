@@ -18,14 +18,13 @@ const GroupsPage = () => {
     if (!groups?.length) return <Status>Группы не найдены</Status>;
 
     return (
-        <div className="mt-6 grid gap-3 md:grid-cols-2 md:gap-4">
+        <div className="mt-6 flex flex-col gap-3">
             {groups.map((elem) => (
                 <GroupButton
                     key={elem.id}
                     id={elem.id}
                     profession={elem.profession}
                     code={elem.code}
-                    category={category}
                     action={<BookmarkButton kind="groups" id={elem.id} />}
                 />
             ))}

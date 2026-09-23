@@ -35,21 +35,6 @@ export async function writeCache(key: string, payload: unknown, version?: string
     }
 }
 
-export async function evictCacheByPrefix(prefix: string): Promise<void> {
-    const db = await getDB();
-    if (!db) return;
-
-    try {
-        const tx = db.transaction('cache', 'readwrite');
-        for await (const cursor of tx.store) {
-            if (cursor.key.startsWith(prefix)) await cursor.delete();
-        }
-        await tx.done;
-    } catch (error) {
-        console.error('Не удалось удалить записи кэша', error);
-    }
-}
-
 export async function evictStale(maxAgeMs: number = MAX_AGE_MS): Promise<void> {
     const db = await getDB();
     if (!db) return;

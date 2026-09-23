@@ -38,6 +38,7 @@ function LessonCard({
                 <span className={`text-base ${theme.chip.split(' ')[1]}`}>{classroom ?? '—'}</span>
             </div>
         </article>
+        <div className={`h-[1px] w-[300px] ${theme.header} last:hidden self-center`}></div>
         </>
     );
 }

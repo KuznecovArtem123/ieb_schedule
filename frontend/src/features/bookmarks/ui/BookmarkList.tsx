@@ -46,7 +46,6 @@ function BookmarkList() {
                     id={group.id}
                     profession={group.profession}
                     code={group.code}
-                    category={group.department.toLowerCase() as 'spo' | 'vo'}
                     action={<BookmarkButton kind="groups" id={group.id} />}
                 />
             ))}
