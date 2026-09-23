@@ -8,9 +8,10 @@ import { Books } from '@gravity-ui/icons';
 interface LessonsProps {
     lessons: Lesson[];
     weekValue: Week;
+    isTeacherSchedule: boolean;
 };
 
-function Lessons({ lessons, weekValue }: LessonsProps) {
+function Lessons({ lessons, weekValue, isTeacherSchedule }: LessonsProps) {
     const navigate = useNavigate();
     const isOnline = useIsOnline();
     const handleWeekChange = (newWeek: Week) => {
@@ -52,7 +53,8 @@ function Lessons({ lessons, weekValue }: LessonsProps) {
                                     subject={elem.subject}
                                     startTime={elem.start_time.slice(0, 5)}
                                     endTime={elem.end_time.slice(0, 5)}
-                                    studentsGroup={elem.group_code}
+                                    studentsGroup={isTeacherSchedule ? elem.group_code : undefined}
+                                    isTeacherSchedule={isTeacherSchedule}
                                     theme={theme}
                                 />
                             ))}
@@ -77,7 +79,7 @@ function Lessons({ lessons, weekValue }: LessonsProps) {
                                         <th className="w-[7%] bg-surface-soft px-4 py-3 font-extrabold text-heading">Пара</th>
                                         <th className="w-[14%] bg-surface-soft px-4 py-3 font-extrabold text-heading">Время</th>
                                         <th className="w-[37%] bg-surface-soft px-4 py-3 font-extrabold text-heading">Дисциплина</th>
-                                        <th className="w-[30%] bg-surface-soft px-4 py-3 font-extrabold text-heading">Преподаватель</th>
+                                        <th className="w-[30%] bg-surface-soft px-4 py-3 font-extrabold text-heading">{isTeacherSchedule ? 'Группа' : 'Преподаватель'}</th>
                                         <th className="w-[12%] bg-surface-soft px-4 py-3 font-extrabold text-heading">Аудитория</th>
                                     </tr>
                                 </thead>
@@ -90,9 +92,8 @@ function Lessons({ lessons, weekValue }: LessonsProps) {
                                             </td>
                                             <td className="break-words px-4 py-5 align-top">
                                                 <div className="font-extrabold">{elem.subject}</div>
-                                                <div className="mt-1 text-sm text-meta">{elem.group_code}</div>
                                             </td>
-                                            <td className="break-words px-4 py-5 align-top text-meta">{elem.teachers.join(', ')}</td>
+                                            <td className="break-words px-4 py-5 align-top text-meta">{isTeacherSchedule ? elem.group_code : elem.teachers.join(', ')}</td>
                                             <td className="break-words px-4 py-5 align-top font-bold text-meta">{elem.auditorium ?? '—'}</td>
                                         </tr>
                                     ))}

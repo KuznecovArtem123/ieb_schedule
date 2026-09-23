@@ -25,7 +25,7 @@ function SchedulePage() {
     if (error) return <Status>Не удалось загрузить расписание</Status>;
     if (!lessons) return <Status>Пар нет</Status>;
 
-    return <Lessons lessons={lessons} weekValue={weekValue} />;
+    return <Lessons lessons={lessons} weekValue={weekValue} isTeacherSchedule={isTeacherRoute} />;
 }
 
 export default SchedulePage;
