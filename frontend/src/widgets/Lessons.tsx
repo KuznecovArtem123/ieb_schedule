@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import LessonCard from '@/entities/lesson/ui/LessonCard';
 import Status from '@/shared/ui/Status';
 import type { Lesson, Week } from '@/entities/lesson/model/types';
+import { Books } from '@gravity-ui/icons';
 
 interface LessonsProps {
     lessons: Lesson[];
@@ -35,7 +36,7 @@ function Lessons({ lessons, weekValue }: LessonsProps) {
             return (
                 <section key={day} className="mb-[25px] overflow-hidden rounded-[27px] bg-surface shadow-card">
                     <div className={`flex min-h-[68px] items-center justify-between px-[19px] text-white ${theme.header}`}>
-                        <div className="flex items-center gap-3.5 text-[1.15rem] font-extrabold tracking-[0.4px]"><span className="text-[1.6rem]">▣</span>{day}</div>
+                        <div className="flex items-center gap-3.5 text-[1.15rem] font-extrabold tracking-[0.4px]"><Books width='22' height='22' />{day}</div>
                         <div className="shrink-0 text-base font-bold">{dateDay}.{dateMonth}</div>
                     </div>
                     <div className={`space-y-3 border-2 border-t-0 ${theme.border} rounded-b-[27px] flex flex-col items-between `}>
@@ -63,8 +64,8 @@ function Lessons({ lessons, weekValue }: LessonsProps) {
     return (
         <div>
             <div className="my-[17px] mb-[22px] grid grid-cols-2 gap-2" aria-label="Переключение недели">
-                <button onClick={() => handleWeekChange('this')} className={`flex min-h-[58px] items-center justify-center gap-1.5 rounded-[17px] text-[0.92rem] font-bold transition ${weekValue === 'this' ? 'bg-primary text-white shadow-week' : 'bg-inactive text-white'}`}><span>▣</span>Эта неделя</button>
-                <button onClick={() => handleWeekChange('next')} className={`flex min-h-[58px] items-center justify-center gap-1.5 rounded-[17px] text-[0.92rem] font-bold transition ${weekValue === 'next' ? 'bg-primary text-white shadow-week' : 'bg-inactive text-white'}`}><span>▣</span>Следующая неделя</button>
+                <button onClick={() => handleWeekChange('this')} className={`flex min-h-[58px] items-center justify-center gap-1.5 rounded-[17px] text-[0.92rem] font-bold transition ${weekValue === 'this' ? 'bg-primary text-white shadow-week' : 'bg-inactive text-white'}`}>Эта неделя</button>
+                <button onClick={() => handleWeekChange('next')} className={`flex min-h-[58px] items-center justify-center gap-1.5 rounded-[17px] text-[0.92rem] font-bold transition ${weekValue === 'next' ? 'bg-primary text-white shadow-week' : 'bg-inactive text-white'}`}>Следующая неделя</button>
             </div>
             {content}
         </div>
