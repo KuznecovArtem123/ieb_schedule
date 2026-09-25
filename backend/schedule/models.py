@@ -65,7 +65,7 @@ class Lesson(models.Model):
     order = models.PositiveIntegerField()
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='lessons')
     schedule = models.ForeignKey("ieb_admin.Schedule", on_delete=models.CASCADE, related_name='lessons')
-    subject = models.CharField(max_length=255)
+    subject = models.TextField()
     auditorium = models.CharField(max_length=100, blank=True, null=True)
     teachers = models.ManyToManyField(Teacher, related_name='lessons', blank=True)
 

@@ -52,6 +52,11 @@ class ScheduleReader:
                     return sheet.cell(range_.min_row, range_.min_col).value
         return cell.value
 
+    def _get_pair_order(self, sheet, row, fallback):
+        value = self._get_cell_value(sheet.cell(row=row, column=1), sheet)
+        match = re.search(r'\d+', str(value or ''))
+        return int(match.group()) if match else fallback
+
     def parse_groups_codes(self, sheet_name):
         return [group.strip() for group in sheet_name.split(',')]
     
@@ -196,7 +201,7 @@ class ScheduleReader:
 
                             # Общие данные для обоих типов
                             base_data = {
-                                'order': index + 1,
+                                'order': self._get_pair_order(sheet, main_row[0].row, index + 1),
                                 'weekday': weekday,
                                 'date_str': self.cached_dates.get(weekday),
                                 'group': group_code,
@@ -273,17 +278,28 @@ class ScheduleReader:
         for item in self.lessons:
             errs = self._check_base_errors(item)
             found_teachers = []
-            for t_name in item.get('teachers', []):
+            teacher_names = item.get('teachers', [])
+            raw_teachers = str(item.get('raw_teachers') or '').strip()
+            if raw_teachers and not teacher_names:
+                errs.append(f"Не удалось распознать преподавателя: {raw_teachers}")
+            auditorium_text = str(item.get('auditorium') or '').strip()
+            auditoriums = [
+                value.strip()
+                for value in re.split(r'[,;/\n]|\s+и\s+', auditorium_text, flags=re.IGNORECASE)
+                if value.strip()
+            ]
+            if len(teacher_names) > 1 and len(auditoriums) > 1:
+                errs.append('В паре указаны несколько преподавателей и аудиторий; требуется ручная проверка')
+
+            for t_name in teacher_names:
                 t_obj = self.Teacher.objects.filter(search_name__iexact=t_name).first()
                 if t_obj:
                     found_teachers.append(t_obj)
                 else:
-                    
                     errs.append(f"Учитель {t_name} не найден")
 
             if errs:
-                if log_errors:
-                    self._log_error(item, errs)
+                self._log_error(item, errs, persist=log_errors)
             else:
                 item.update({'teacher_objs': found_teachers})
                 self.valid_lessons.append(item)
@@ -292,8 +308,7 @@ class ScheduleReader:
         for item in self.announces:
             errs = self._check_base_errors(item)
             if errs:
-                if log_errors:
-                    self._log_error(item, errs)
+                self._log_error(item, errs, persist=log_errors)
             else:
                 # Анонсам не нужны учителя, только базовые проверки
                 self.valid_announces.append(item)
@@ -348,7 +363,7 @@ class ScheduleReader:
             item.update({'group_obj': group_obj, 'date_obj': p_date})
         return errs
 
-    def _log_error(self, item: dict, errs):
+    def _log_error(self, item: dict, errs, persist=True):
         """Запись ошибки в базу данных."""
         copy = item.copy()
         for key in ('group_obj', 'date_obj', 'teachers', 'teacher_objs'):
@@ -357,10 +372,11 @@ class ScheduleReader:
             copy['start_time'] = copy['start_time'].strftime('%H:%M')
         if isinstance(copy['end_time'], datetime.time):
             copy['end_time'] = copy['end_time'].strftime('%H:%M')
-        self.ErrorModel.objects.create(
-            raw_data = copy,
-            description = errs[0]
-        )
+        if persist:
+            self.ErrorModel.objects.create(
+                raw_data=copy,
+                description=errs[0],
+            )
         self.exceptions.append({'item': copy, 'reasons': errs})
 
     def fix_error(self, error, cleaned_data):
