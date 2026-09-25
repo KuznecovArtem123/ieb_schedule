@@ -10,7 +10,11 @@ interface DayNavigationProps {
 
 function DayNavigation({ onDaySelect, days }: DayNavigationProps) {
     const scrollRef = useRef<HTMLDivElement>(null);
-    const [canScroll, setCanScroll] = useState({ left: false, right: false });
+    const [canScroll, setCanScroll] = useState({
+        isNeeded: false,
+        left: false,
+        right: false,
+    });
 
     useEffect(() => {
         const element = scrollRef.current;
@@ -18,13 +22,24 @@ function DayNavigation({ onDaySelect, days }: DayNavigationProps) {
 
         const update = () => {
             const { scrollLeft, clientWidth, scrollWidth } = element;
+            const styles = getComputedStyle(element);
+            const buttons = Array.from(element.children);
+
+            const contentWidth =
+                buttons.reduce((width, button) => width + button.getBoundingClientRect().width, 0) +
+                Math.max(0, buttons.length - 1) * parseFloat(styles.columnGap) +
+                parseFloat(styles.paddingLeft) +
+                parseFloat(styles.paddingRight);
+
             setCanScroll({
+                isNeeded: contentWidth > element.parentElement!.clientWidth + 1,
                 left: scrollLeft > 1,
                 right: scrollLeft + clientWidth < scrollWidth - 1,
             });
         };
         const observer = new ResizeObserver(update);
         observer.observe(element);
+        observer.observe(element.parentElement!);
         element.addEventListener('scroll', update, { passive: true });
         return () => {
             observer.disconnect();
@@ -36,7 +51,7 @@ function DayNavigation({ onDaySelect, days }: DayNavigationProps) {
         const element = scrollRef.current;
         element?.scrollBy({ left: direction * element.clientWidth * 0.75 });
     };
-    const arrowClass = canScroll.left || canScroll.right ? 'shrink-0' : 'shrink-0 invisible';
+    const arrowClass = canScroll.isNeeded ? 'shrink-0' : 'hidden';
 
     return (
         <nav aria-label="Навигация по дням" className="flex items-center gap-2 py-2">
