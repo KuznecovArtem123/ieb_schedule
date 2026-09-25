@@ -2,7 +2,6 @@ import { ChevronLeft, ChevronRight } from '@gravity-ui/icons';
 import { Button } from '@heroui/react';
 import { useEffect, useRef, useState } from 'react';
 import { dayAliases } from '../model/dayAliases';
-import { useIsDesktop } from '@/shared/lib/useIsDesktop';
 
 interface DayNavigationProps {
     onDaySelect(index: number): void;
@@ -10,7 +9,6 @@ interface DayNavigationProps {
 }
 
 function DayNavigation({ onDaySelect, days }: DayNavigationProps) {
-    const isDesktop = useIsDesktop();
     const scrollRef = useRef<HTMLDivElement>(null);
     const [canScroll, setCanScroll] = useState({
         isNeeded: false,
@@ -56,7 +54,7 @@ function DayNavigation({ onDaySelect, days }: DayNavigationProps) {
     const arrowClass = canScroll.isNeeded ? 'shrink-0' : 'hidden';
 
     return (
-        <nav aria-label="Навигация по дням" className="flex items-center gap-2 py-3">
+        <nav aria-label="Навигация по дням" className="flex items-center gap-2 py-3 lg:hidden">
             <Button
                 isIconOnly
                 variant="primary"
@@ -75,7 +73,7 @@ function DayNavigation({ onDaySelect, days }: DayNavigationProps) {
                         className="bg-primary shrink-0"
                         onClick={() => onDaySelect(index)}
                     >
-                        {isDesktop ? day : dayAliases[day.toLowerCase()] || day}
+                        {dayAliases[day.toLowerCase()] || day}
                     </Button>
                 ))}
             </div>
