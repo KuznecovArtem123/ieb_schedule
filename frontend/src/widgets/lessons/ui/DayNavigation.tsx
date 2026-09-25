@@ -2,6 +2,7 @@ import { ChevronLeft, ChevronRight } from '@gravity-ui/icons';
 import { Button } from '@heroui/react';
 import { useEffect, useRef, useState } from 'react';
 import { dayAliases } from '../model/dayAliases';
+import { useIsDesktop } from '@/shared/lib/useIsDesktop';
 
 interface DayNavigationProps {
     onDaySelect(index: number): void;
@@ -9,6 +10,7 @@ interface DayNavigationProps {
 }
 
 function DayNavigation({ onDaySelect, days }: DayNavigationProps) {
+    const isDesktop = useIsDesktop();
     const scrollRef = useRef<HTMLDivElement>(null);
     const [canScroll, setCanScroll] = useState({
         isNeeded: false,
@@ -54,14 +56,14 @@ function DayNavigation({ onDaySelect, days }: DayNavigationProps) {
     const arrowClass = canScroll.isNeeded ? 'shrink-0' : 'hidden';
 
     return (
-        <nav aria-label="Навигация по дням" className="flex items-center gap-2 py-2">
+        <nav aria-label="Навигация по дням" className="flex items-center gap-2 py-3">
             <Button
                 isIconOnly
-                variant="secondary"
+                variant="primary"
                 aria-label="Прокрутить дни влево"
                 isDisabled={!canScroll.left}
                 onClick={() => scroll(-1)}
-                className={arrowClass}
+                className={`${canScroll.left ? 'bg-primary' : 'bg-inactive'} ${arrowClass}`}
             >
                 <ChevronLeft width={18} height={18} aria-hidden="true" />
             </Button>
@@ -69,21 +71,21 @@ function DayNavigation({ onDaySelect, days }: DayNavigationProps) {
                 {days.map((day, index) => (
                     <Button
                         key={day}
-                        variant="secondary"
-                        className="shrink-0"
+                        variant="primary"
+                        className="bg-primary shrink-0"
                         onClick={() => onDaySelect(index)}
                     >
-                        {dayAliases[day.toLowerCase()] || day}
+                        {isDesktop ? day : dayAliases[day.toLowerCase()] || day}
                     </Button>
                 ))}
             </div>
             <Button
                 isIconOnly
-                variant="secondary"
+                variant="primary"
                 aria-label="Прокрутить дни вправо"
                 isDisabled={!canScroll.right}
                 onClick={() => scroll(1)}
-                className={arrowClass}
+                className={`${canScroll.right ? 'bg-primary' : 'bg-inactive'} ${arrowClass}`}
             >
                 <ChevronRight width={18} height={18} aria-hidden="true" />
             </Button>

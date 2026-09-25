@@ -127,11 +127,11 @@ function Lessons({ lessons, weekValue, isTeacherSchedule }: LessonsProps) {
                     Вы офлайн. Расписание может быть неактуальным.
                 </div>
             )}
-            <DayNavigation onDaySelect={handleScroll} days={weeklist} />
-            <div className="my-[17px] mb-[22px] grid grid-cols-2 gap-2" aria-label="Переключение недели">
+            <div className="my-[17px] mb-[10px] grid grid-cols-2 gap-2" aria-label="Переключение недели">
                 <button onClick={() => handleWeekChange('this')} className={`flex min-h-[58px] items-center justify-center gap-1.5 rounded-[17px] text-[0.92rem] font-bold transition ${weekValue === 'this' ? 'bg-primary text-white shadow-week' : 'bg-inactive text-white'}`}>Эта неделя</button>
                 <button onClick={() => handleWeekChange('next')} className={`flex min-h-[58px] items-center justify-center gap-1.5 rounded-[17px] text-[0.92rem] font-bold transition ${weekValue === 'next' ? 'bg-primary text-white shadow-week' : 'bg-inactive text-white'}`}>Следующая неделя</button>
             </div>
+            <DayNavigation onDaySelect={handleScroll} days={weeklist} />
             <div className="md:grid md:grid-cols-1 md:items-start md:gap-6">
                 {content}
             </div>
