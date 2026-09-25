@@ -61,7 +61,7 @@ function DayNavigation({ onDaySelect, days }: DayNavigationProps) {
                 aria-label="Прокрутить дни влево"
                 isDisabled={!canScroll.left}
                 onClick={() => scroll(-1)}
-                className={`${canScroll.left ? 'bg-primary' : 'bg-inactive'} ${arrowClass}`}
+                className={`${canScroll.left ? 'bg-chip-primary' : 'bg-inactive'} ${arrowClass}`}
             >
                 <ChevronLeft width={18} height={18} aria-hidden="true" />
             </Button>
@@ -83,7 +83,7 @@ function DayNavigation({ onDaySelect, days }: DayNavigationProps) {
                 aria-label="Прокрутить дни вправо"
                 isDisabled={!canScroll.right}
                 onClick={() => scroll(1)}
-                className={`${canScroll.right ? 'bg-primary' : 'bg-inactive'} ${arrowClass}`}
+                className={`${canScroll.right ? 'bg-chip-primary' : 'bg-inactive'} ${arrowClass}`}
             >
                 <ChevronRight width={18} height={18} aria-hidden="true" />
             </Button>
