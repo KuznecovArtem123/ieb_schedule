@@ -2,7 +2,6 @@ import { useNavigate } from 'react-router-dom';
 import LessonCard from '@/entities/lesson/ui/LessonCard';
 import Status from '@/shared/ui/Status';
 import type { Lesson, Week } from '@/entities/lesson/model/types';
-import { useIsOnline } from '@/shared/lib/network';
 import { Books } from '@gravity-ui/icons';
 import { useRef } from 'react';
 import DayNavigation from './DayNavigation';
@@ -16,7 +15,6 @@ interface LessonsProps {
 function Lessons({ lessons, weekValue, isTeacherSchedule }: LessonsProps) {
     const daysRef = useRef<(HTMLElement | null)[]>([]);
     const navigate = useNavigate();
-    const isOnline = useIsOnline();
 
     const handleWeekChange = (newWeek: Week) => {
         navigate(
@@ -121,12 +119,7 @@ function Lessons({ lessons, weekValue, isTeacherSchedule }: LessonsProps) {
     }
 
     return (
-        <div className='mt-2'>
-            {!isOnline && (
-                <div className="mb-[17px] rounded-[17px] border border-warning bg-warning/15 px-4 py-3 text-sm font-semibold leading-5 text-warning-content" role="status">
-                    Вы офлайн. Расписание может быть неактуальным.
-                </div>
-            )}
+        <>
             <div className="my-[17px] mb-[10px] grid grid-cols-2 gap-2" aria-label="Переключение недели">
                 <button onClick={() => handleWeekChange('this')} className={`flex min-h-[58px] items-center justify-center gap-1.5 rounded-[17px] text-[0.92rem] font-bold transition ${weekValue === 'this' ? 'bg-primary text-white shadow-week' : 'bg-inactive text-white'}`}>Эта неделя</button>
                 <button onClick={() => handleWeekChange('next')} className={`flex min-h-[58px] items-center justify-center gap-1.5 rounded-[17px] text-[0.92rem] font-bold transition ${weekValue === 'next' ? 'bg-primary text-white shadow-week' : 'bg-inactive text-white'}`}>Следующая неделя</button>
@@ -135,7 +128,7 @@ function Lessons({ lessons, weekValue, isTeacherSchedule }: LessonsProps) {
             <div className="md:grid md:grid-cols-1 md:items-start md:gap-6">
                 {content}
             </div>
-        </div>
+        </>
     );
 }
 

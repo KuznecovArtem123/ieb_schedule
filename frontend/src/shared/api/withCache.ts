@@ -10,18 +10,25 @@ export function getWithEtag<T>(url: string, etag?: string, allowNotFound = false
     });
 }
 
+export type OnCached<T> = (data: T) => void;
+
 interface CacheOptions<T> {
     notFoundValue?: T;
+    onCached?: OnCached<T>
 }
 
 export async function withCache<T>(
     key: string,
     request: (etag?: string) => Promise<AxiosResponse<T>>,
+    forceRequest: boolean = false,
     options: CacheOptions<T> = {},
 ): Promise<T> {
     const cached = await readCache<T>(key);
+    if (cached) {
+        options.onCached?.(cached.data);
+    }
 
-    if (getIsOnline()) {
+    if (forceRequest || getIsOnline()) {
         try {
             const response = await request(cached?.etag);
             reportNetworkSuccess();

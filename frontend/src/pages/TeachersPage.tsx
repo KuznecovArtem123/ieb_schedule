@@ -1,14 +1,18 @@
 import TeacherButton from '@/entities/teacher/ui/TeacherButton';
-import { teacherService } from '@/entities/teacher/api/teacherService';
+import teacherService from '@/entities/teacher/api/teacherService';
+import type { Teacher } from '@/entities/teacher/model/types';
 import { useFetch } from '@/shared/lib/useFetch';
 import Status from '@/shared/ui/Status';
 import { BookmarkButton } from '@/features/bookmarks';
 
 const TeachersPage = () => {
-    const { data: teachers, loading, error } = useFetch(() => teacherService.get(), []);
+    const { data: teachers, loading, error } = useFetch<Teacher[]>(
+        (onCached, forceRequest = false) => teacherService.get(onCached, forceRequest),
+        [],
+    );
 
     if (loading) return <Status>Загрузка...</Status>;
-    if (error) return <Status>Не удалось загрузить преподавателей</Status>;
+    if (error && teachers === null) return <Status>Не удалось загрузить преподавателей</Status>;
     if (!teachers?.length) return <Status>Преподаватели не найдены</Status>;
 
     return (
