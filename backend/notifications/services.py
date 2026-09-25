@@ -31,7 +31,7 @@ def send_push_notification(title, body, url='/', subscriptions=None):
                 subscription_info=subscription.as_webpush_subscription(),
                 data=payload,
                 vapid_private_key=settings.WEBPUSH_VAPID_PRIVATE_KEY,
-                vapid_claims=settings.WEBPUSH_VAPID_CLAIMS,
+                vapid_claims=settings.WEBPUSH_VAPID_CLAIMS.copy(),
             )
         except WebPushException as error:
             response = getattr(error, 'response', None)
