@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight } from '@gravity-ui/icons';
 import { Button } from '@heroui/react';
 import { useEffect, useRef, useState } from 'react';
+import { dayAliases } from '../model/dayAliases';
 
 interface DayNavigationProps {
     onDaySelect(index: number): void;
@@ -57,7 +58,7 @@ function DayNavigation({ onDaySelect, days }: DayNavigationProps) {
                         className="shrink-0"
                         onClick={() => onDaySelect(index)}
                     >
-                        {day}
+                        {dayAliases[day.toLowerCase()] || day}
                     </Button>
                 ))}
             </div>
