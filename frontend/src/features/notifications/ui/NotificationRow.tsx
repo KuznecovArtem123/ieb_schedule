@@ -1,7 +1,7 @@
 import { Switch } from '@heroui/react';
 
 import { usePushState } from '@/shared/lib/push';
-import {Bell} from '@gravity-ui/icons';
+import { Bell } from '@gravity-ui/icons';
 
 function NotificationRow() {
     const { mode, busy, enableNotifications, disableNotifications } = usePushState();
@@ -22,11 +22,11 @@ function NotificationRow() {
         <div className="overflow-hidden rounded-[27px] bg-surface p-5 shadow-card">
             <div className="flex items-center justify-between gap-4">
                 <div className='flex gap-2 items-center'>
-                    <Bell width='30' height='30'/>
+                    <Bell width='30' height='30' />
                     <div>
                         <p className="text-base font-extrabold text-heading flex gap-[10px]">
                             Уведомления
-                            </p>
+                        </p>
                         <p className="mt-1 text-sm leading-5 text-subtle">{description}</p>
                     </div>
                 </div>

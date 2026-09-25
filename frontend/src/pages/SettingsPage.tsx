@@ -12,8 +12,8 @@ function SettingsPage() {
             <div className="px-2 text-center">
                 <h1 className="text-[2rem] font-black tracking-[-0.04em] text-heading">Настройки</h1>
             </div>
-            <InstallCard/>
 
+            <InstallCard/>
             <div className="overflow-hidden rounded-[27px] bg-surface p-5 shadow-card">
                 <div className="flex items-center justify-between gap-4">
                     <div className='flex gap-2 items-center'>

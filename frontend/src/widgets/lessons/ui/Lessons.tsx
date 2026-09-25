@@ -4,6 +4,8 @@ import Status from '@/shared/ui/Status';
 import type { Lesson, Week } from '@/entities/lesson/model/types';
 import { useIsOnline } from '@/shared/lib/network';
 import { Books } from '@gravity-ui/icons';
+import { useRef } from 'react';
+import DayNavigation from './DayNavigation';
 
 interface LessonsProps {
     lessons: Lesson[];
@@ -12,8 +14,10 @@ interface LessonsProps {
 };
 
 function Lessons({ lessons, weekValue, isTeacherSchedule }: LessonsProps) {
+    const daysRef = useRef<(HTMLElement | null)[]>([]);
     const navigate = useNavigate();
     const isOnline = useIsOnline();
+
     const handleWeekChange = (newWeek: Week) => {
         navigate(
             { search: `?week=${newWeek}` },
@@ -21,23 +25,31 @@ function Lessons({ lessons, weekValue, isTeacherSchedule }: LessonsProps) {
         );
     };
 
+    const handleScroll = (index: number) => {
+        daysRef.current[index]?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+        });
+    };
+
     let content;
     const dayThemes = [
         { header: 'bg-primary', border: 'border-primary', chip: 'bg-chip-primary text-link' },
         { header: 'bg-accent', border: 'border-accent', chip: 'bg-chip-accent text-accent' },
     ];
+    const weeklist = [...new Set(lessons.map(lesson => lesson.weekday))];
 
     if (lessons && lessons.length > 0) {
-        const weeklist = [...new Set(lessons.map(lesson => lesson.weekday))];
 
         content = weeklist.map((day, dayIndex) => {
             const dayLessons = lessons.filter(l => l.weekday === day);
             const [, dateMonth, dateDay] = dayLessons[0].date.split('-');
             const theme = dayThemes[dayIndex % dayThemes.length];
 
-
             return (
-                <section key={day} className={`mb-[25px] overflow-hidden rounded-[27px] bg-surface shadow-card md:rounded-[27px] md:border-2 md:bg-surface md:shadow-card ${theme.border}`}>
+                <section ref={(elem) => {
+                    daysRef.current[dayIndex] = elem;
+                }} key={day} className={`mb-[25px] overflow-hidden rounded-[27px] bg-surface shadow-card md:rounded-[27px] md:border-2 md:bg-surface md:shadow-card ${theme.border}`}>
                     <div className={`flex min-h-[68px] items-center justify-between px-[19px] text-white md:hidden ${theme.header}`}>
                         <div className="flex items-center gap-3.5 text-[1.15rem] font-extrabold tracking-[0.4px]"><Books width='22' height='22' />{day}</div>
                         <div className="shrink-0 text-base font-bold">{dateDay}.{dateMonth}</div>
@@ -115,6 +127,7 @@ function Lessons({ lessons, weekValue, isTeacherSchedule }: LessonsProps) {
                     Вы офлайн. Расписание может быть неактуальным.
                 </div>
             )}
+            <DayNavigation onDaySelect={handleScroll} days={weeklist} />
             <div className="my-[17px] mb-[22px] grid grid-cols-2 gap-2" aria-label="Переключение недели">
                 <button onClick={() => handleWeekChange('this')} className={`flex min-h-[58px] items-center justify-center gap-1.5 rounded-[17px] text-[0.92rem] font-bold transition ${weekValue === 'this' ? 'bg-primary text-white shadow-week' : 'bg-inactive text-white'}`}>Эта неделя</button>
                 <button onClick={() => handleWeekChange('next')} className={`flex min-h-[58px] items-center justify-center gap-1.5 rounded-[17px] text-[0.92rem] font-bold transition ${weekValue === 'next' ? 'bg-primary text-white shadow-week' : 'bg-inactive text-white'}`}>Следующая неделя</button>

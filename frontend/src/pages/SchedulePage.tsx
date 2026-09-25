@@ -2,7 +2,7 @@ import { useSearchParams, useParams, useMatch } from "react-router-dom";
 
 import { groupService } from '@/entities/group/api/groupService';
 import { teacherService } from '@/entities/teacher/api/teacherService';
-import Lessons from '@/widgets/Lessons';
+import Lessons from '@/widgets/lessons/ui/Lessons';
 import { isWeek } from '@/entities/lesson/model/types';
 import { useFetch } from '@/shared/lib/useFetch';
 import Status from '@/shared/ui/Status';
