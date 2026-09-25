@@ -5,6 +5,7 @@ const axiosClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 15_000
 });
 
 export default axiosClient;
