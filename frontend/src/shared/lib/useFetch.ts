@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
+import { subscribeReconnect } from '@/shared/lib/network';
+
 interface FetchState<T> {
     data: T | null;
     loading: boolean;
@@ -23,18 +25,24 @@ export function useFetch<T>(fetcher: (onCached: (data: T) => void, forceRequest?
 
     const forceRequestRef = useRef(false);
 
+    const reload = () => {
+        forceRequestRef.current = true;
+        setRetryCount((count) => count + 1);
+    };
+
     const refetch = () => {
         if (retrying) return;
 
-        forceRequestRef.current = true;
         setRetrying(true);
-        setRetryCount((count) => count + 1);
+        reload();
     }
 
     if (key !== loadedKey) {
         setLoadedKey(key);
         setState(INITIAL);
     }
+
+    useEffect(() => subscribeReconnect(reload), []);
 
     useEffect(() => {
         let cancelled = false;

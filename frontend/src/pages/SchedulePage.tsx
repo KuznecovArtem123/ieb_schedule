@@ -33,8 +33,9 @@ function SchedulePage() {
         content = <Status>Не удалось загрузить расписание</Status>;
     } else if (lessons) {
         content = <Lessons lessons={lessons} weekValue={weekValue} isTeacherSchedule={isTeacherRoute} />;
+    } else {
+        content = <Status>Пар нет</Status>;
     }
-    if (!lessons) content = <Status>Пар нет</Status>;
 
     return (
         <div className="mt-2">

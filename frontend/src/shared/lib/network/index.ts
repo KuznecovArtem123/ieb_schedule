@@ -1,3 +1,8 @@
 export { useIsOnline } from './useIsOnline';
-export { getIsOnline, reportNetworkError, reportNetworkSuccess } from './store';
+export {
+    getIsBrowserOnline,
+    reportNetworkError,
+    reportNetworkSuccess,
+    subscribeReconnect,
+} from './store';
 export { isNetworkError } from './isNetworkError';
