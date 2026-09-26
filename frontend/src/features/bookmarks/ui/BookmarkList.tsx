@@ -4,6 +4,7 @@ import groupService from "@/entities/group/api/groupService";
 import teacherService from "@/entities/teacher/api/teacherService";
 import type { Group } from "@/entities/group/model/types";
 import type { Teacher } from "@/entities/teacher/model/types";
+import { fresh } from "@/shared/api/withCache";
 import { useFetch } from "@/shared/lib/useFetch";
 import Status from "@/shared/ui/Status";
 import { useBookmarks } from "../model/useBookmarks";
@@ -15,11 +16,11 @@ function BookmarkList() {
     const hasTeachers = bookmarks.teachers.length > 0;
 
     const groupState = useFetch<Group[]>(
-        (onCached, forceRequest = false) => hasGroups ? groupService.getAll(onCached, forceRequest) : Promise.resolve([]),
+        (onCached, forceRequest = false) => hasGroups ? groupService.getAll(onCached, forceRequest) : Promise.resolve(fresh<Group[]>([])),
         [hasGroups],
     );
     const teacherState = useFetch<Teacher[]>(
-        (onCached, forceRequest = false) => hasTeachers ? teacherService.get(onCached, forceRequest) : Promise.resolve([]),
+        (onCached, forceRequest = false) => hasTeachers ? teacherService.get(onCached, forceRequest) : Promise.resolve(fresh<Teacher[]>([])),
         [hasTeachers],
     );
 

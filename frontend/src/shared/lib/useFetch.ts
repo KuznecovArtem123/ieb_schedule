@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 
+import type { CacheResult } from '@/shared/api/withCache';
 import { subscribeReconnect } from '@/shared/lib/network';
 
 interface FetchState<T> {
     data: T | null;
     loading: boolean;
     refreshing: boolean;
+    stale: boolean;
     error: unknown;
 }
 
@@ -14,9 +16,9 @@ interface UseFetchResult<T> extends FetchState<T> {
     refetch: () => void;
 }
 
-const INITIAL = { data: null, loading: true, refreshing: false, error: null } as const;
+const INITIAL = { data: null, loading: true, refreshing: false, stale: false, error: null } as const;
 
-export function useFetch<T>(fetcher: (onCached: (data: T) => void, forceRequest?: boolean) => Promise<T>, deps: unknown[]): UseFetchResult<T> {
+export function useFetch<T>(fetcher: (onCached: (data: T) => void, forceRequest?: boolean) => Promise<CacheResult<T>>, deps: unknown[]): UseFetchResult<T> {
     const key = JSON.stringify(deps);
     const [state, setState] = useState<FetchState<T>>(INITIAL);
     const [loadedKey, setLoadedKey] = useState(key);
@@ -54,6 +56,7 @@ export function useFetch<T>(fetcher: (onCached: (data: T) => void, forceRequest?
                 data,
                 refreshing: true,
                 loading: false,
+                stale: true,
                 error: null,
             });
         };
@@ -62,12 +65,13 @@ export function useFetch<T>(fetcher: (onCached: (data: T) => void, forceRequest?
         forceRequestRef.current = false;
 
         fetcher(onCached, forceRequest)
-            .then((data) => {
+            .then(({ data, stale }) => {
                 if (cancelled) return;
                 setState({
                     data,
                     refreshing: false,
                     loading: false,
+                    stale,
                     error: null
                 });
             })
@@ -78,6 +82,7 @@ export function useFetch<T>(fetcher: (onCached: (data: T) => void, forceRequest?
                     ...previous,
                     loading: false,
                     refreshing: false,
+                    stale: previous.data !== null,
                     error
                 }));
             })

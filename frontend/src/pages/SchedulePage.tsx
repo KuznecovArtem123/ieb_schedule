@@ -21,7 +21,7 @@ function SchedulePage() {
     const weekValue = isWeek(weekParam) ? weekParam : 'this';
     const isTeacherRoute = useMatch('/teacher/:id') !== null;
 
-    const { data: lessons, loading, refreshing, retrying, refetch, error } = useFetch<Lesson[]>(
+    const { data: lessons, loading, refreshing, stale, retrying, refetch, error } = useFetch<Lesson[]>(
         (onCached, forceRequest = false) =>
             (isTeacherRoute ? teacherService : groupService).getLessons(idNumber, weekValue, onCached, forceRequest),
         [idNumber, isTeacherRoute, weekValue],
@@ -29,7 +29,7 @@ function SchedulePage() {
 
     if (loading) return <Status>Загрузка...</Status>;
     let content;
-    if (error && lessons === null) {
+    if (error || lessons === null) {
         content = <Status>Не удалось загрузить расписание</Status>;
     } else if (lessons) {
         content = <Lessons lessons={lessons} weekValue={weekValue} isTeacherSchedule={isTeacherRoute} />;
@@ -37,31 +37,47 @@ function SchedulePage() {
         content = <Status>Пар нет</Status>;
     }
 
+    const retryButton = (
+        <Button
+            variant="secondary"
+            className="min-h-11 shrink-0 rounded-xl border border-warning/40 bg-warning/10 text-warning-content"
+            isDisabled={retrying}
+            onClick={refetch}
+        >
+            <ArrowRotateRight
+                width={16}
+                height={16}
+                aria-hidden="true"
+                className={retrying ? 'motion-safe:animate-spin' : undefined}
+            />
+            {retrying ? 'Загрузка...' : 'Повторить'}
+        </Button>
+    );
+
+    let banner = null;
+    if (!isOnline) {
+        banner = (
+            <StatusBanner tone="warning" action={retryButton}>
+                Вы офлайн. Расписание может быть неактуальным.
+            </StatusBanner>
+        );
+    } else if (refreshing) {
+        banner = (
+            <StatusBanner tone="info">
+                Показываем сохранённое расписание. Проверяем обновления…
+            </StatusBanner>
+        );
+    } else if (stale) {
+        banner = (
+            <StatusBanner tone="warning" action={retryButton}>
+                Не удалось обновить расписание. Показываем сохранённое.
+            </StatusBanner>
+        );
+    }
+
     return (
         <div className="mt-2">
-            {!isOnline ? (
-                <StatusBanner tone="warning" action={
-                    <Button
-                        variant="secondary"
-                        className="min-h-11 shrink-0 rounded-xl border border-warning/40 bg-warning/10 text-warning-content"
-                        isDisabled={retrying}
-                        onClick={refetch}
-                    >
-                        <ArrowRotateRight
-                            width={16}
-                            height={16}
-                            aria-hidden="true"
-                            className={retrying ? 'motion-safe:animate-spin' : undefined}
-                        />
-                        {retrying ? 'Загрузка...' : 'Повторить'}
-                    </Button>}>
-                    Вы офлайн. Расписание может быть неактуальным.
-                </StatusBanner>
-            ) : refreshing ? (
-                <StatusBanner tone="info">
-                    Показываем сохранённое расписание. Проверяем обновления…
-                </StatusBanner>
-            ) : null}
+            {banner}
             {content}
         </div>
     );
