@@ -28,8 +28,13 @@ function SchedulePage() {
     );
 
     if (loading) return <Status>Загрузка...</Status>;
-    if (error && lessons === null) return <Status>Не удалось загрузить расписание</Status>;
-    if (!lessons) return <Status>Пар нет</Status>;
+    let content;
+    if (error && lessons === null) {
+        content = <Status>Не удалось загрузить расписание</Status>;
+    } else if (lessons) {
+        content = <Lessons lessons={lessons} weekValue={weekValue} isTeacherSchedule={isTeacherRoute} />;
+    }
+    if (!lessons) content = <Status>Пар нет</Status>;
 
     return (
         <div className="mt-2">
@@ -56,7 +61,7 @@ function SchedulePage() {
                     Показываем сохранённое расписание. Проверяем обновления…
                 </StatusBanner>
             ) : null}
-            <Lessons lessons={lessons} weekValue={weekValue} isTeacherSchedule={isTeacherRoute} />
+            {content}
         </div>
     );
 }
