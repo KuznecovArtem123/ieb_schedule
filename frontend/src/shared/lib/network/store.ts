@@ -1,4 +1,5 @@
 const listeners = new Set<() => void>();
+const reconnectListeners = new Set<() => void>();
 
 let online = navigator.onLine;
 
@@ -13,10 +14,20 @@ export function subscribe(listener: () => void) {
     return () => { listeners.delete(listener); };
 }
 
+export function subscribeReconnect(listener: () => void) {
+    reconnectListeners.add(listener);
+    return () => { reconnectListeners.delete(listener); };
+}
+
 export function getIsOnline() { return online; }
+
+export function getIsBrowserOnline() { return navigator.onLine; }
 
 export function reportNetworkError() { set(false); }
 export function reportNetworkSuccess() { set(true); }
 
-window.addEventListener('online', () => set(true));
+window.addEventListener('online', () => {
+    set(true);
+    reconnectListeners.forEach((listener) => listener());
+});
 window.addEventListener('offline', () => set(false));

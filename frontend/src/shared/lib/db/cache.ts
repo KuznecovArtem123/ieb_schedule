@@ -24,9 +24,14 @@ export async function readCache<T>(key: string): Promise<CachedValue<T> | null> 
     }
 }
 
-export async function writeCache(key: string, payload: unknown, etag?: string): Promise<void> {
+export async function writeCache(
+    key: string,
+    payload: unknown,
+    etag?: string,
+    shouldWrite: () => boolean = () => true,
+): Promise<void> {
     const db = await getDB();
-    if (!db) return;
+    if (!db || !shouldWrite()) return;
 
     try {
         await db.put('cache', { key, payload, savedAt: Date.now(), etag });

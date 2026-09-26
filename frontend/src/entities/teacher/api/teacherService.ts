@@ -1,14 +1,25 @@
-import { getWithEtag, withCache } from "@/shared/api/withCache";
+import { getWithEtag, withCache, type CacheResult, type OnCached } from "@/shared/api/withCache";
 import type { Lesson, Week } from "@/entities/lesson/model/types";
 import type { Teacher } from "../model/types";
 
-export const teacherService = {
-  get: (): Promise<Teacher[]> =>
-    withCache('teachers', (etag) =>
-      getWithEtag<Teacher[]>(`/teachers`, etag)),
+class TeacherService {
+  get(onCached?: OnCached<Teacher[]>, forceRequest = false): Promise<CacheResult<Teacher[]>> {
+    return withCache(
+      "teachers",
+      (etag) => getWithEtag<Teacher[]>("/teachers", etag),
+      forceRequest,
+      { onCached },
+    );
+  }
 
-  getLessons: (id: number, week: Week = "this"): Promise<Lesson[]> =>
-    withCache(`teacher:${id}:${week}`, (etag) =>
-      getWithEtag<Lesson[]>(`/lessons/fromTeacher/${id}?week=${week}`, etag, true),
-      { notFoundValue: [] }),
-};
+  getLessons(id: number, week: Week = "this", onCached?: OnCached<Lesson[]>, forceRequest = false): Promise<CacheResult<Lesson[]>> {
+    return withCache(
+      `teacher:${id}:${week}`,
+      (etag) => getWithEtag<Lesson[]>(`/lessons/fromTeacher/${id}?week=${week}`, etag, true),
+      forceRequest,
+      { notFoundValue: [], onCached },
+    );
+  }
+}
+
+export default new TeacherService();
