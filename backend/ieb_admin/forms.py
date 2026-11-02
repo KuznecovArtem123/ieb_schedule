@@ -46,15 +46,25 @@ def initial_from_schedule_error(error):
     if parsed_date:
         initial['date'] = parsed_date
 
-    teacher_pattern = re.compile(r'[А-Я][а-яё]+\s+[А-Я]\.\s*[А-Я]\.')
-    raw_teachers = raw.get('raw_teachers') or ''
     found = []
-    for match in teacher_pattern.findall(str(raw_teachers)):
-        parts = re.split(r'\s+', match.strip())
-        search_name = f"{parts[0]} {''.join(parts[1:]).replace(' ', '')}"
-        teacher = Teacher.objects.filter(search_name__icontains=search_name[:10]).first()
-        if teacher and teacher not in found:
-            found.append(teacher)
+    teacher_names = raw.get('teacher_names') or raw.get('teachers') or []
+    if isinstance(teacher_names, list):
+        for t_name in teacher_names:
+            teacher = Teacher.objects.filter(search_name__iexact=t_name).first()
+            if not teacher and ' ' in str(t_name):
+                teacher = Teacher.objects.filter(search_name__icontains=str(t_name).split()[0]).first()
+            if teacher and teacher not in found:
+                found.append(teacher)
+
+    if not found:
+        teacher_pattern = re.compile(r'[А-ЯЁ][а-яё-]+\s+[А-ЯЁ]\.\s*[А-ЯЁ]\.')
+        raw_teachers = raw.get('raw_teachers') or ''
+        for match in teacher_pattern.findall(str(raw_teachers)):
+            parts = re.split(r'\s+', match.strip())
+            search_name = f"{parts[0]} {''.join(parts[1:]).replace(' ', '')}"
+            teacher = Teacher.objects.filter(search_name__icontains=search_name[:10]).first()
+            if teacher and teacher not in found:
+                found.append(teacher)
     if found:
         initial['teachers'] = found
 

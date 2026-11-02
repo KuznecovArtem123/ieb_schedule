@@ -8,12 +8,13 @@ from openpyxl.cell import MergedCell
 
 
 class ScheduleReader:
-    def __init__(self, file_obj, TeacherModel, LessonModel, GroupModel, ErrorModel):
+    def __init__(self, file_obj, TeacherModel, LessonModel, GroupModel, ErrorModel, require_subgroup_confirmation=True):
         self.Teacher = TeacherModel
         self.Group = GroupModel
         self.Lesson = LessonModel
         self.ErrorModel = ErrorModel
         self.file_obj = file_obj
+        self.require_subgroup_confirmation = require_subgroup_confirmation
         self.filePath = self.file_obj.file.path
         self.workBook = openpyxl.load_workbook(self.filePath, data_only=True)
         
@@ -177,6 +178,174 @@ class ScheduleReader:
 
         return subject_clean, teachers_list
 
+    @staticmethod
+    def _extract_subgroup_number(text, fallback=1):
+        if not text:
+            return fallback
+        match = re.search(r'(\d)\s*(?:подгрупп|п/?г)', str(text), flags=re.IGNORECASE)
+        if match:
+            return int(match.group(1))
+        match = re.search(r'(?:подгрупп|п/?г)\s*(\d)', str(text), flags=re.IGNORECASE)
+        if match:
+            return int(match.group(1))
+        return fallback
+
+    @staticmethod
+    def _has_subgroup_keyword(text):
+        if not text:
+            return False
+        return bool(re.search(r'(подгрупп|\b\d\s*п/?г\b|\bп/?г\s*\d\b)', str(text), flags=re.IGNORECASE))
+
+    def _split_subgroup_cell(self, text):
+        if not text:
+            return "", [], ""
+        text_str = str(text)
+        teachers_norm = []
+        raw_matches = []
+
+        teacher_pattern = re.compile(
+            r'(?P<last_name>[А-ЯЁ][а-яё-]+)\s+(?P<init1>[А-ЯЁ])\s*\.\s*(?P<init2>[А-ЯЁ])\s*\.?'
+        )
+        for m in teacher_pattern.finditer(text_str):
+            teachers_norm.append(f"{m.group('last_name')} {m.group('init1')}.{m.group('init2')}.")
+            raw_matches.append(m.group(0))
+
+        full_teacher_pattern = re.compile(
+            r'(?:(?:ст\.?\s*преп(?:одаватель)?\.?|преп(?:одаватель)?\.?|доцент|профессор|ассистент|руководитель|куратор:?)\s*)?'
+            r'[А-ЯЁ][а-яё-]+\s+[А-ЯЁ]\s*\.\s*[А-ЯЁ]\s*\.?',
+            flags=re.IGNORECASE
+        )
+
+        cleaned = text_str
+        for m in full_teacher_pattern.finditer(text_str):
+            cleaned = cleaned.replace(m.group(0), " ")
+
+        prefixes = [
+            r'\bст\.?\s*преп(?:одаватель)?\.?',
+            r'\bпреп(?:одаватель)?\.?',
+            r'\bдоцент\b',
+            r'\bпрофессор\b',
+            r'\bкуратор\b:?',
+        ]
+        for p in prefixes:
+            cleaned = re.sub(p, " ", cleaned, flags=re.IGNORECASE)
+
+        cleaned = re.sub(r'[\r\n]+', ' ', cleaned)
+        cleaned = re.sub(r'\s+', ' ', cleaned).strip(" ,.-:\t")
+        raw_teachers_str = ", ".join(raw_matches)
+        return cleaned, teachers_norm, raw_teachers_str
+
+    def _check_two_subgroups(self, main_row, info_row, sheet):
+        """Проверяет, делится ли пара на две подгруппы (новый и старый форматы).
+        Возвращает (True, [subgroup_1_dict, subgroup_2_dict]) или (False, None).
+        """
+        cell_1 = main_row[1]
+        cell_2 = info_row[1]
+        if isinstance(cell_1, MergedCell):
+            return False, None
+
+        main_val = self._get_cell_value(cell_1, sheet)
+        if not main_val:
+            return False, None
+
+        info_val = self._get_cell_value(cell_2, sheet)
+        main_aud = self._get_cell_value(main_row[2], sheet)
+        info_aud = self._get_cell_value(info_row[2], sheet)
+        is_info_aud_merged = isinstance(info_row[2], MergedCell)
+
+        main_str = str(main_val or '').strip()
+        info_str = str(info_val or '').strip()
+
+        subj_main, teachers_main, raw_t_main = self._split_subgroup_cell(main_str)
+        subj_info, teachers_info, raw_t_info = self._split_subgroup_cell(info_str)
+
+        has_sub_main = self._has_subgroup_keyword(main_str)
+        has_sub_info = self._has_subgroup_keyword(info_str)
+
+        # Ветвь 1: Новый формат расписания (скрин 2)
+        # В main_row и info_row указаны предметы и преподаватели для каждой подгруппы,
+        # а ячейки аудиторий разделены и каждая содержит своё значение.
+        is_new_subgroups = False
+        if subj_info and (has_sub_info or has_sub_main):
+            if teachers_main and teachers_info:
+                is_new_subgroups = True
+            elif not is_info_aud_merged and info_aud and str(info_aud).strip() and str(info_aud).strip() != str(main_aud).strip():
+                is_new_subgroups = True
+
+        if is_new_subgroups:
+            aud_1 = str(main_aud or '').strip()
+            aud_2 = str(info_aud or '').strip()
+            if is_info_aud_merged or not aud_2 or aud_1 == aud_2:
+                if '\n' in aud_1 or ',' in aud_1:
+                    parts = [p.strip() for p in re.split(r'[\r\n]+|\,\s*', aud_1) if p.strip()]
+                    if len(parts) >= 2:
+                        aud_1, aud_2 = parts[0], parts[1]
+
+            num_1 = self._extract_subgroup_number(subj_main, fallback=1)
+            num_2 = self._extract_subgroup_number(subj_info, fallback=2)
+            if num_1 == num_2:
+                num_2 = 2 if num_1 == 1 else 1
+
+            subgroup_1 = {
+                'subject': subj_main,
+                'teachers': teachers_main,
+                'raw_teachers': raw_t_main,
+                'auditorium': aud_1,
+                'is_subgroup': True,
+                'subgroup_num': num_1,
+            }
+            subgroup_2 = {
+                'subject': subj_info,
+                'teachers': teachers_info,
+                'raw_teachers': raw_t_info,
+                'auditorium': aud_2,
+                'is_subgroup': True,
+                'subgroup_num': num_2,
+            }
+            return True, [subgroup_1, subgroup_2]
+
+        # Ветвь 2: Старый формат расписания (скрин 1)
+        # В main_row предмет первой подгруппы, в info_row преподаватель 1 - предмет 2 - преподаватель 2,
+        # аудитория объединена и содержит оба значения.
+        if has_sub_main and (has_sub_info or len(teachers_info) >= 2):
+            aud_1 = str(main_aud or '').strip()
+            aud_2 = str(info_aud or '').strip()
+            if is_info_aud_merged or not aud_2 or aud_1 == aud_2:
+                if '\n' in aud_1 or ',' in aud_1 or ' ' in aud_1:
+                    parts = [p.strip() for p in re.split(r'[\r\n]+|\,\s*|\s{2,}', aud_1) if p.strip()]
+                    if len(parts) >= 2:
+                        aud_1, aud_2 = parts[0], parts[1]
+
+            t1 = [teachers_info[0]] if len(teachers_info) > 0 else []
+            t2 = [teachers_info[1]] if len(teachers_info) > 1 else teachers_info
+            raw_1 = t1[0] if t1 else ""
+            raw_2 = t2[0] if t2 else ""
+
+            num_1 = self._extract_subgroup_number(main_str, fallback=1)
+            num_2 = self._extract_subgroup_number(subj_info, fallback=2)
+            if num_1 == num_2:
+                num_2 = 2 if num_1 == 1 else 1
+
+            subgroup_1 = {
+                'subject': main_str.strip(),
+                'teachers': t1,
+                'raw_teachers': raw_1,
+                'auditorium': aud_1,
+                'is_subgroup': True,
+                'subgroup_num': num_1,
+            }
+            subgroup_2 = {
+                'subject': subj_info,
+                'teachers': t2,
+                'raw_teachers': raw_2,
+                'auditorium': aud_2,
+                'is_subgroup': True,
+                'subgroup_num': num_2,
+            }
+            return True, [subgroup_1, subgroup_2]
+
+        return False, None
+
     def create_lesson_dict(self, sheet, group_codes, weekday, range_coords_list):
         for i, group_code in enumerate(group_codes):
                     if i >= len(range_coords_list): continue
@@ -191,15 +360,6 @@ class ScheduleReader:
                         cell_content = self._get_cell_value(main_row[1], sheet)
                         
                         if cell_content:
-                            is_subgroups = False
-                            # try:
-                            #     is_subgroups = ('подгруппа' in info_row[1].value) or (len(info_row[1].value) > 50)
-                            # except:
-                            #     is_subgroups = False
-                            if is_subgroups:
-                                subgroups_subjects, subgroups_teachers = self.get_subjects_and_teachers(main_row[1].value, info_row[1].value)
-
-                            # Общие данные для обоих типов
                             base_data = {
                                 'order': self._get_pair_order(sheet, main_row[0].row, index + 1),
                                 'weekday': weekday,
@@ -212,16 +372,24 @@ class ScheduleReader:
                             if isinstance(main_row[1], MergedCell) or (not main_row[2].value and not info_row[1].value):
                                 # Для объявлений: только текст
                                 if len(repeated_announces) == 0:
-                                    
                                     base_data['content'] = cell_content
                                     self.announces.append(base_data)
                                 continue
-                            
+
+                            # Проверка на две подгруппы (отдельная условная ветвь поведения при загрузке)
+                            is_subgroups, subgroups_data = self._check_two_subgroups(main_row, info_row, sheet)
+                            if is_subgroups and subgroups_data:
+                                for sg in subgroups_data:
+                                    sg_item = base_data.copy()
+                                    sg_item.update(sg)
+                                    self.lessons.append(sg_item)
+                                continue
+
                             # Для обычных уроков: добавляем предмет, учителей и кабинет
                             base_data.update({
                                 'raw_teachers': info_row[1].value, 
-                                'subject': subgroups_subjects if is_subgroups else cell_content,
-                                'teachers': subgroups_teachers if is_subgroups else self.process_teacher_lastname(str(info_row[1].value or "")),
+                                'subject': cell_content,
+                                'teachers': self.process_teacher_lastname(str(info_row[1].value or "")),
                                 'auditorium': main_row[2].value
                             })
                             self.lessons.append(base_data)
@@ -288,15 +456,23 @@ class ScheduleReader:
                 for value in re.split(r'[,;/\n]|\s+и\s+', auditorium_text, flags=re.IGNORECASE)
                 if value.strip()
             ]
-            if len(teacher_names) > 1 and len(auditoriums) > 1:
+            if len(teacher_names) > 1 and len(auditoriums) > 1 and not item.get('is_subgroup'):
                 errs.append('В паре указаны несколько преподавателей и аудиторий; требуется ручная проверка')
 
             for t_name in teacher_names:
                 t_obj = self.Teacher.objects.filter(search_name__iexact=t_name).first()
+                if not t_obj and ' ' in str(t_name):
+                    t_obj = self.Teacher.objects.filter(search_name__icontains=str(t_name).split()[0]).first()
                 if t_obj:
                     found_teachers.append(t_obj)
                 else:
                     errs.append(f"Учитель {t_name} не найден")
+
+            # Отдельная ветвь для пар с двумя подгруппами: создаем исключение для обязательного подтверждения админом
+            if item.get('is_subgroup') and getattr(self, 'require_subgroup_confirmation', True):
+                subgroup_num = item.get('subgroup_num')
+                label = f" (подгруппа {subgroup_num})" if subgroup_num else ""
+                errs.append(f"Пара разделена на две подгруппы{label}; требуется подтверждение администратора")
 
             if errs:
                 self._log_error(item, errs, persist=log_errors)
@@ -366,6 +542,8 @@ class ScheduleReader:
     def _log_error(self, item: dict, errs, persist=True):
         """Запись ошибки в базу данных."""
         copy = item.copy()
+        if 'teachers' in copy and isinstance(copy['teachers'], list):
+            copy['teacher_names'] = list(copy['teachers'])
         for key in ('group_obj', 'date_obj', 'teachers', 'teacher_objs'):
             copy.pop(key, None)
         if isinstance(copy['start_time'], datetime.time):

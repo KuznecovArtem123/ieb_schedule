@@ -145,7 +145,8 @@ CORS_EXPOSE_HEADERS = ['ETag']
 
 CSRF_TRUSTED_ORIGINS = [
     "https://ineb-schedule.ru",
-    "http://localhost"
+    "http://localhost",
+    "http://localhost:8080"
 ]
 
 WEBPUSH_VAPID_PUBLIC_KEY = os.getenv('WEBPUSH_VAPID_PUBLIC_KEY', '')

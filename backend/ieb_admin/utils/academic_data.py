@@ -89,7 +89,9 @@ class AcademicDataParser:
                             continue
                         combined_range = self._combined_range(sheet, range_coords_list[index])
                         for row_index in range(1, len(combined_range), 2):
+                            subject_cell = combined_range[row_index - 1][1]
                             teacher_cell = combined_range[row_index][1]
+                            teachers.update(self._teacher_names(self._cell_value(subject_cell, sheet)))
                             teachers.update(self._teacher_names(self._cell_value(teacher_cell, sheet)))
         finally:
             workbook.close()
