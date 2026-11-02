@@ -267,9 +267,7 @@ class ScheduleReader:
         # а ячейки аудиторий разделены и каждая содержит своё значение.
         is_new_subgroups = False
         if subj_info and (has_sub_info or has_sub_main):
-            if teachers_main and teachers_info:
-                is_new_subgroups = True
-            elif not is_info_aud_merged and info_aud and str(info_aud).strip() and str(info_aud).strip() != str(main_aud).strip():
+            if teachers_main and teachers_info or not is_info_aud_merged and info_aud and str(info_aud).strip() and str(info_aud).strip() != str(main_aud).strip():
                 is_new_subgroups = True
 
         if is_new_subgroups:
